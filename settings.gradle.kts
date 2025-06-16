@@ -19,6 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "MusicApp"
+rootProject.name = "Online Tour Booking System"
 include(":app")
  

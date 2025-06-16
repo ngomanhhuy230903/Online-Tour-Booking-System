@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.musicapp"
+    namespace = "com.example.onlinetourbookingsystem"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.example.musicapp"
+        applicationId = "com.example.onlinetourbookingsystem"
         minSdk = 27
         targetSdk = 35
         versionCode = 1
