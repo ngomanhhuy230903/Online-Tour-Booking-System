@@ -12,9 +12,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.annotation.Nullable;
 
-import com.example.tourbooking.MainActivity;
 import com.example.tourbooking.R;
+import com.example.tourbooking.view.info.TermsActivity;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -24,6 +25,9 @@ public class LoginActivity extends AppCompatActivity {
     // Dữ liệu mẫu để kiểm tra
     private final String correctUsername = "admin";
     private final String correctPassword = "123456";
+
+    private static final int REQUEST_TERMS = 100;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,10 +46,9 @@ public class LoginActivity extends AppCompatActivity {
 
             if (username.equals(correctUsername) && password.equals(correctPassword)) {
                 Toast.makeText(this, "Login successful!", Toast.LENGTH_SHORT).show();
-                // Chuyển sang MainActivity hoặc màn hình khác
-                Intent intent = new Intent(this, DashBoardActivity.class);
-                startActivity(intent);
-                finish();
+                // Mở TermsActivity để người dùng chấp nhận điều khoản trước khi vào Dashboard
+                Intent intent = new Intent(this, TermsActivity.class);
+                startActivityForResult(intent, REQUEST_TERMS);
             } else {
                 Toast.makeText(this, "Invalid credentials", Toast.LENGTH_SHORT).show();
             }
@@ -61,5 +64,20 @@ public class LoginActivity extends AppCompatActivity {
             Intent intent = new Intent(this, RegisterActivity.class);
             startActivity(intent);
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_TERMS) {
+            if (resultCode == RESULT_OK) {
+                // Người dùng đã chấp nhận điều khoản, vào Dashboard
+                Intent intent = new Intent(this, DashBoardActivity.class);
+                startActivity(intent);
+                finish();
+            } else {
+                Toast.makeText(this, "You must accept terms to continue", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }
