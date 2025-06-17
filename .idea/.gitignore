@@ -1,0 +1,7 @@
+# Default ignored files
+/shelf/
+/workspace.xml
+# Ignore IDE-specific files
+.idea/gradle.xml
+.idea/misc.xml
+
