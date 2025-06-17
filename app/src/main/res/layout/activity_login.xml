@@ -45,5 +45,30 @@
         android:layout_height="wrap_content"
         android:text="Login"
         android:backgroundTint="#6200EE"
-        android:textColor="#FFFFFF" />
+        android:textColor="#FFFFFF"
+        android:layout_marginBottom="24dp" />
+
+    <!-- Forgot Password -->
+    <TextView
+        android:id="@+id/textViewForgotPassword"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Forgot Password?"
+        android:textColor="#03A9F4"
+        android:textSize="14sp"
+        android:layout_marginBottom="8dp"
+        android:clickable="true"
+        android:focusable="true" />
+
+    <!-- Register -->
+    <TextView
+        android:id="@+id/textViewRegister"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Don't have an account? Register"
+        android:textColor="#03A9F4"
+        android:textSize="14sp"
+        android:clickable="true"
+        android:focusable="true" />
+
 </LinearLayout>
