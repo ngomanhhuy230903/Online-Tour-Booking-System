@@ -1,4 +1,4 @@
-package com.example.onlinetourbookingsystem;
+package com.example.tourbooking;
 
 import org.junit.Test;
 
