@@ -1,3 +1,10 @@
 # Default ignored files
 /shelf/
 /workspace.xml
+<<<<<<< HEAD
+=======
+# Ignore IDE-specific files
+.idea/gradle.xml
+.idea/misc.xml
+
+>>>>>>> 2ceb2bd02733fc9b5f0fb00779cc5a485f535385
