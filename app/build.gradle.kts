@@ -3,12 +3,12 @@ plugins {
 }
 
 android {
-    namespace = "com.example.onlinetourbookingsystem"
+    namespace = "com.example.tourbooking"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.example.onlinetourbookingsystem"
-        minSdk = 27
+        applicationId = "com.example.tourbooking"
+        minSdk = 24
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"

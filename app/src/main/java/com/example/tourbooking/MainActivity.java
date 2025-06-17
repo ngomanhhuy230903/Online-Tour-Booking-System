@@ -1,4 +1,4 @@
-package com.example.onlinetourbookingsystem;
+package com.example.tourbooking;
 
 import android.os.Bundle;
 
