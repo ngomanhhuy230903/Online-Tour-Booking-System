@@ -1,3 +1,15 @@
 <resources>
     <string name="app_name">TourBooking</string>
+    <string name="terms_title">Terms &amp; Conditions</string>
+    <string name="terms_search_hint">Search terms</string>
+    <string name="terms_last_updated">Last updated: 2023-01-01</string>
+    <string name="terms_print">Print</string>
+    <string name="terms_decline">Decline</string>
+    <string name="terms_accept">Accept</string>
+    <string name="terms_placeholder">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla eget.</string>
+    <string name="terms_found">"%1$s" found in document</string>
+    <string name="faq_title">FAQ</string>
+    <string name="faq_search_hint">Search FAQs</string>
+    <string name="faq_no_results">No FAQs found</string>
+    <string name="faq_contact_support">Contact Support</string>
 </resources>
