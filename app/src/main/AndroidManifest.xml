@@ -44,7 +44,9 @@
         <activity
             android:name=".view.auth.LoginActivity"
             android:exported="false" />
-
+        <activity
+            android:name=".view.info.TermsActivity"
+            android:exported="false" />
     </application>
 
 </manifest>
