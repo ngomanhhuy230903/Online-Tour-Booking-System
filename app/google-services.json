@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "175540384194",
+    "project_id": "tourbooking-app",
+    "storage_bucket": "tourbooking-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:175540384194:android:5b3228bc4be18720eaa65b",
+        "android_client_info": {
+          "package_name": "com.example.tourbooking"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBT1S-plkawQatsD_rBTY4-AMpbBxs0n-I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
