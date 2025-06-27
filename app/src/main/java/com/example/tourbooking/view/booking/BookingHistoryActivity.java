@@ -1,20 +1,29 @@
-// File: view/booking/BookingHistoryActivity.java
+// File: view/booking/BookingHistoryActivity.java (Đã sửa lỗi khai báo)
 package com.example.tourbooking.view.booking;
 
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.tourbooking.R;
 import com.example.tourbooking.adapter.BookingAdapter;
 import com.example.tourbooking.model.Booking;
+import com.google.android.material.chip.ChipGroup;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -33,15 +42,24 @@ public class BookingHistoryActivity extends AppCompatActivity {
     private TextView tvNoHistory;
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
+    private ChipGroup chipGroupFilter;
+    private Toolbar toolbar;
+    private SwipeRefreshLayout swipeRefreshLayout; // <-- DÒNG BỊ THIẾU ĐÃ ĐƯỢC THÊM VÀO
+
+    private String currentStatusFilter = "ALL";
+    private String currentSearchQuery = "";
+    private Query.Direction currentSortDirection = Query.Direction.DESCENDING;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_booking_history);
 
-        Toolbar toolbar = findViewById(R.id.toolbar_booking_history);
+        toolbar = findViewById(R.id.toolbar_booking_history);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
         toolbar.setNavigationOnClickListener(v -> onBackPressed());
 
         db = FirebaseFirestore.getInstance();
@@ -49,24 +67,81 @@ public class BookingHistoryActivity extends AppCompatActivity {
 
         initializeViews();
         setupRecyclerView();
-        loadBookingHistory();
+        setupFilterChips();
+        setupSwipeToRefresh();
+        setupItemTouchHelper();
+
+        fetchBookings();
     }
 
     private void initializeViews() {
         rvBookingHistory = findViewById(R.id.rvBookingHistory);
         progressBar = findViewById(R.id.progressBar);
         tvNoHistory = findViewById(R.id.tvNoHistory);
+        chipGroupFilter = findViewById(R.id.chipGroupFilter);
+        swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
     }
 
-    private void setupRecyclerView() {
-        bookingList = new ArrayList<>();
-        adapter = new BookingAdapter(bookingList, this);
-        rvBookingHistory.setLayoutManager(new LinearLayoutManager(this));
-        rvBookingHistory.setAdapter(adapter);
+    private void setupSwipeToRefresh() {
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            fetchBookings();
+        });
     }
 
-    private void loadBookingHistory() {
-        progressBar.setVisibility(View.VISIBLE);
+    private void setupItemTouchHelper() {
+        ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                int position = viewHolder.getAdapterPosition();
+                Booking bookingToCancel = bookingList.get(position);
+
+                if ("UPCOMING".equalsIgnoreCase(bookingToCancel.getStatus())) {
+                    cancelBooking(bookingToCancel, position);
+                } else {
+                    adapter.notifyItemChanged(position);
+                    Snackbar.make(rvBookingHistory, "Chỉ có thể hủy các tour Sắp tới.", Snackbar.LENGTH_LONG).show();
+                }
+            }
+        };
+
+        new ItemTouchHelper(simpleCallback).attachToRecyclerView(rvBookingHistory);
+    }
+
+    private void cancelBooking(Booking booking, int position) {
+        db.collection("bookings").document(booking.getId())
+                .update("status", "CANCELED")
+                .addOnSuccessListener(aVoid -> {
+                    booking.setStatus("CANCELED");
+                    adapter.notifyItemChanged(position);
+                    Snackbar.make(rvBookingHistory, "Đã hủy đơn hàng #" + booking.getId().substring(booking.getId().length() - 7), Snackbar.LENGTH_LONG)
+                            .setAction("Hoàn tác", v -> undoCancelBooking(booking, position))
+                            .show();
+                })
+                .addOnFailureListener(e -> {
+                    adapter.notifyItemChanged(position);
+                    Toast.makeText(this, "Lỗi: Không thể hủy đơn hàng.", Toast.LENGTH_SHORT).show();
+                });
+    }
+
+    private void undoCancelBooking(Booking booking, int position) {
+        db.collection("bookings").document(booking.getId())
+                .update("status", "UPCOMING")
+                .addOnSuccessListener(aVoid -> {
+                    booking.setStatus("UPCOMING");
+                    adapter.notifyItemChanged(position);
+                    Toast.makeText(this, "Đã hoàn tác.", Toast.LENGTH_SHORT).show();
+                });
+    }
+
+    private void fetchBookings() {
+        if (!swipeRefreshLayout.isRefreshing()) {
+            progressBar.setVisibility(View.VISIBLE);
+        }
         rvBookingHistory.setVisibility(View.GONE);
         tvNoHistory.setVisibility(View.GONE);
 
@@ -74,22 +149,30 @@ public class BookingHistoryActivity extends AppCompatActivity {
         if (currentUser == null) {
             Toast.makeText(this, "Vui lòng đăng nhập để xem lịch sử", Toast.LENGTH_SHORT).show();
             progressBar.setVisibility(View.GONE);
+            swipeRefreshLayout.setRefreshing(false);
             tvNoHistory.setVisibility(View.VISIBLE);
             return;
         }
 
-        String userId = currentUser.getUid();
+        Query query = db.collection("bookings").whereEqualTo("userId", currentUser.getUid());
 
-        db.collection("bookings")
-                .whereEqualTo("userId", userId)
-                .orderBy("bookingDate", Query.Direction.DESCENDING)
-                .get()
+        if (!currentStatusFilter.equals("ALL")) {
+            query = query.whereEqualTo("status", currentStatusFilter);
+        }
+
+        if (!currentSearchQuery.isEmpty()) {
+            query = query.orderBy("tourName").startAt(currentSearchQuery).endAt(currentSearchQuery + '\uf8ff');
+        } else {
+            query = query.orderBy("bookingDate", currentSortDirection);
+        }
+
+        query.get()
                 .addOnCompleteListener(task -> {
                     progressBar.setVisibility(View.GONE);
+                    swipeRefreshLayout.setRefreshing(false);
                     if (task.isSuccessful()) {
                         bookingList.clear();
                         for (QueryDocumentSnapshot document : task.getResult()) {
-                            // Chuyển đổi Document từ Firestore thành đối tượng Booking
                             Booking booking = document.toObject(Booking.class);
                             bookingList.add(booking);
                         }
@@ -103,9 +186,72 @@ public class BookingHistoryActivity extends AppCompatActivity {
                             adapter.setBookingList(bookingList);
                         }
                     } else {
-                        Toast.makeText(BookingHistoryActivity.this, "Lỗi khi tải lịch sử.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(BookingHistoryActivity.this, "Lỗi khi tải lịch sử: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
                         tvNoHistory.setVisibility(View.VISIBLE);
                     }
                 });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_booking_history, menu);
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView) searchItem.getActionView();
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                currentSearchQuery = query;
+                fetchBookings();
+                searchView.clearFocus();
+                return true;
+            }
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if (newText.isEmpty()) {
+                    currentSearchQuery = "";
+                    fetchBookings();
+                }
+                return true;
+            }
+        });
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.action_sort) {
+            if (currentSortDirection == Query.Direction.DESCENDING) {
+                currentSortDirection = Query.Direction.ASCENDING;
+                Toast.makeText(this, "Sắp xếp: Cũ nhất đến mới nhất", Toast.LENGTH_SHORT).show();
+            } else {
+                currentSortDirection = Query.Direction.DESCENDING;
+                Toast.makeText(this, "Sắp xếp: Mới nhất đến cũ nhất", Toast.LENGTH_SHORT).show();
+            }
+            fetchBookings();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void setupRecyclerView() {
+        bookingList = new ArrayList<>();
+        adapter = new BookingAdapter(bookingList, this);
+        rvBookingHistory.setLayoutManager(new LinearLayoutManager(this));
+        rvBookingHistory.setAdapter(adapter);
+    }
+
+    private void setupFilterChips() {
+        chipGroupFilter.setOnCheckedChangeListener((group, checkedId) -> {
+            if (checkedId == R.id.chipAll) {
+                currentStatusFilter = "ALL";
+            } else if (checkedId == R.id.chipUpcoming) {
+                currentStatusFilter = "UPCOMING";
+            } else if (checkedId == R.id.chipCompleted) {
+                currentStatusFilter = "COMPLETED";
+            } else if (checkedId == R.id.chipCanceled) {
+                currentStatusFilter = "CANCELED";
+            }
+            fetchBookings();
+        });
     }
 }
