@@ -1,4 +1,4 @@
-// File: view/booking/BookingHistoryActivity.java (Hoàn thiện với Pagination)
+// File: view/booking/BookingHistoryActivity.java (Phiên bản cuối cùng, đầy đủ nhất)
 package com.example.tourbooking.view.booking;
 
 import android.os.Bundle;
@@ -26,7 +26,7 @@ import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentSnapshot; // Import mới
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -47,24 +47,24 @@ public class BookingHistoryActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private SwipeRefreshLayout swipeRefreshLayout;
 
-    // === CÁC BIẾN MỚI ĐỂ QUẢN LÝ PAGINATION ===
     private String currentStatusFilter = "ALL";
     private String currentSearchQuery = "";
     private Query.Direction currentSortDirection = Query.Direction.DESCENDING;
-    private boolean isLoading = false; // Cờ để tránh tải nhiều trang cùng lúc
-    private boolean isLastPage = false; // Cờ để biết đã đến trang cuối cùng chưa
-    private DocumentSnapshot lastVisibleDocument = null; // Lưu lại document cuối cùng của trang trước
-    private static final long PAGE_SIZE = 10; // Số lượng item mỗi trang
+    private boolean isLoading = false;
+    private boolean isLastPage = false;
+    private DocumentSnapshot lastVisibleDocument = null;
+    private static final long PAGE_SIZE = 10;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_booking_history);
 
-        // ... (phần khởi tạo ban đầu giữ nguyên)
         toolbar = findViewById(R.id.toolbar_booking_history);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
         toolbar.setNavigationOnClickListener(v -> onBackPressed());
 
         db = FirebaseFirestore.getInstance();
@@ -76,11 +76,10 @@ public class BookingHistoryActivity extends AppCompatActivity {
         setupSwipeToRefresh();
         setupItemTouchHelper();
 
-        loadInitialBookings(); // Tải trang đầu tiên
+        loadInitialBookings();
     }
 
     private void initializeViews() {
-        // ... (giữ nguyên)
         rvBookingHistory = findViewById(R.id.rvBookingHistory);
         progressBar = findViewById(R.id.progressBar);
         tvNoHistory = findViewById(R.id.tvNoHistory);
@@ -95,7 +94,6 @@ public class BookingHistoryActivity extends AppCompatActivity {
         rvBookingHistory.setLayoutManager(layoutManager);
         rvBookingHistory.setAdapter(adapter);
 
-        // === THÊM SỰ KIỆN LẮNG NGHE CUỘN ĐỂ TẢI THÊM ===
         rvBookingHistory.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
@@ -104,45 +102,41 @@ public class BookingHistoryActivity extends AppCompatActivity {
                 int totalItemCount = layoutManager.getItemCount();
                 int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
 
-                // Điều kiện để tải trang tiếp theo
                 if (!isLoading && !isLastPage) {
                     if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount
                             && firstVisibleItemPosition >= 0
                             && totalItemCount >= PAGE_SIZE) {
-                        fetchBookings(false); // Tải trang tiếp theo
+                        fetchBookings(false);
                     }
                 }
             }
         });
     }
 
-    // === CÁC HÀM XỬ LÝ SỰ KIỆN SẼ GỌI loadInitialBookings() ĐỂ RESET VÀ TẢI LẠI TỪ ĐẦU ===
     private void setupFilterChips() {
         chipGroupFilter.setOnCheckedChangeListener((group, checkedId) -> {
             if (checkedId == R.id.chipAll) currentStatusFilter = "ALL";
             else if (checkedId == R.id.chipUpcoming) currentStatusFilter = "UPCOMING";
             else if (checkedId == R.id.chipCompleted) currentStatusFilter = "COMPLETED";
             else if (checkedId == R.id.chipCanceled) currentStatusFilter = "CANCELED";
-            loadInitialBookings(); // Reset và tải lại từ đầu
+            loadInitialBookings();
         });
     }
 
     private void setupSwipeToRefresh() {
-        swipeRefreshLayout.setOnRefreshListener(this::loadInitialBookings); // Reset và tải lại từ đầu
+        swipeRefreshLayout.setOnRefreshListener(this::loadInitialBookings);
     }
 
-    // Hàm để reset và tải lại từ trang đầu tiên
     private void loadInitialBookings() {
         isLastPage = false;
         lastVisibleDocument = null;
         bookingList.clear();
         adapter.notifyDataSetChanged();
-        fetchBookings(true); // isInitialLoad = true
+        fetchBookings(true);
     }
 
-    // === HÀM fetchBookings() được nâng cấp toàn diện cho PAGINATION ===
     private void fetchBookings(boolean isInitialLoad) {
-        if (isLoading) return; // Nếu đang tải rồi thì không làm gì cả
+        if (isLoading) return;
         isLoading = true;
 
         if (isInitialLoad && !swipeRefreshLayout.isRefreshing()) {
@@ -150,15 +144,23 @@ public class BookingHistoryActivity extends AppCompatActivity {
         }
         tvNoHistory.setVisibility(View.GONE);
 
+        // === PHẦN LOGIC LOGIN LINH HOẠT ĐÃ ĐƯỢC KẾT HỢP VÀO ĐÂY ===
+        String userIdToQuery;
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (currentUser == null) { /* ... (giữ nguyên logic xử lý user null) ... */ return; }
 
-        // Xây dựng câu truy vấn
+        if (currentUser != null) {
+            // Người dùng đã đăng nhập -> Dùng ID thật
+            userIdToQuery = currentUser.getUid();
+        } else {
+            // Chưa đăng nhập -> Dùng ID giả để test
+            userIdToQuery = "DUMMY_USER_ID_123";
+        }
+        // =========================================================
+
         Query query = db.collection("bookings")
-                .whereEqualTo("userId", currentUser.getUid())
-                .limit(PAGE_SIZE); // Luôn giới hạn số lượng item mỗi lần tải
+                .whereEqualTo("userId", userIdToQuery) // Luôn dùng userIdToQuery
+                .limit(PAGE_SIZE);
 
-        // Áp dụng các bộ lọc và sắp xếp
         if (!currentStatusFilter.equals("ALL")) {
             query = query.whereEqualTo("status", currentStatusFilter);
         }
@@ -168,7 +170,6 @@ public class BookingHistoryActivity extends AppCompatActivity {
             query = query.orderBy("bookingDate", currentSortDirection);
         }
 
-        // Nếu đây không phải lần tải đầu tiên, bắt đầu truy vấn từ item cuối cùng của lần trước
         if (!isInitialLoad && lastVisibleDocument != null) {
             query = query.startAfter(lastVisibleDocument);
         }
@@ -177,34 +178,18 @@ public class BookingHistoryActivity extends AppCompatActivity {
             isLoading = false;
             progressBar.setVisibility(View.GONE);
             swipeRefreshLayout.setRefreshing(false);
-
             if (task.isSuccessful() && task.getResult() != null) {
+                if(isInitialLoad) bookingList.clear();
+
                 List<DocumentSnapshot> documents = task.getResult().getDocuments();
-
-                // Chuyển đổi documents thành danh sách Bookings
-                List<Booking> newBookings = new ArrayList<>();
                 for (QueryDocumentSnapshot document : task.getResult()) {
-                    newBookings.add(document.toObject(Booking.class));
+                    bookingList.add(document.toObject(Booking.class));
                 }
-
-                // Nối danh sách mới vào danh sách cũ
-                bookingList.addAll(newBookings);
                 adapter.notifyDataSetChanged();
 
-                // Kiểm tra xem đây có phải trang cuối cùng không
-                if (documents.size() < PAGE_SIZE) {
-                    isLastPage = true;
-                }
-
-                // Lưu lại document cuối cùng để làm điểm bắt đầu cho lần tải tiếp theo
-                if (!documents.isEmpty()) {
-                    lastVisibleDocument = documents.get(documents.size() - 1);
-                }
-
-                // Xử lý thông báo "Không có lịch sử"
-                if (bookingList.isEmpty()) {
-                    tvNoHistory.setVisibility(View.VISIBLE);
-                }
+                if (documents.size() < PAGE_SIZE) isLastPage = true;
+                if (!documents.isEmpty()) lastVisibleDocument = documents.get(documents.size() - 1);
+                if (bookingList.isEmpty()) tvNoHistory.setVisibility(View.VISIBLE);
 
             } else {
                 Toast.makeText(BookingHistoryActivity.this, "Lỗi khi tải lịch sử.", Toast.LENGTH_SHORT).show();
@@ -212,7 +197,6 @@ public class BookingHistoryActivity extends AppCompatActivity {
         });
     }
 
-    // ... (Các hàm còn lại như setupItemTouchHelper, cancelBooking, onCreateOptionsMenu, onOptionsItemSelected... giữ nguyên)
     private void setupItemTouchHelper() {
         ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
@@ -220,6 +204,7 @@ public class BookingHistoryActivity extends AppCompatActivity {
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 int position = viewHolder.getAdapterPosition();
+                if (position == RecyclerView.NO_POSITION) return;
                 Booking bookingToCancel = bookingList.get(position);
                 if ("UPCOMING".equalsIgnoreCase(bookingToCancel.getStatus())) {
                     cancelBooking(bookingToCancel, position);
@@ -236,7 +221,7 @@ public class BookingHistoryActivity extends AppCompatActivity {
                 .addOnSuccessListener(aVoid -> {
                     booking.setStatus("CANCELED");
                     adapter.notifyItemChanged(position);
-                    Snackbar.make(rvBookingHistory, "Đã hủy đơn hàng #" + booking.getId().substring(booking.getId().length() - 7), Snackbar.LENGTH_LONG)
+                    Snackbar.make(rvBookingHistory, "Đã hủy đơn hàng", Snackbar.LENGTH_LONG)
                             .setAction("Hoàn tác", v -> undoCancelBooking(booking, position)).show();
                 })
                 .addOnFailureListener(e -> {
@@ -261,7 +246,7 @@ public class BookingHistoryActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 currentSearchQuery = query;
-                loadInitialBookings(); // Reset và tìm kiếm từ đầu
+                loadInitialBookings();
                 searchView.clearFocus();
                 return true;
             }
