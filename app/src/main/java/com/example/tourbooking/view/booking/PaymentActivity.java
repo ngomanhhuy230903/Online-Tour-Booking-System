@@ -222,13 +222,13 @@ public class PaymentActivity extends AppCompatActivity {
 
         // Tạo đối tượng Booking
         Booking newBooking = new Booking(
-                paymentIntent.getId(),
-                "Khám phá Vịnh Hạ Long 2 ngày 1 đêm", // Dữ liệu thật
-                new java.util.Date(), // Ngày hiện tại
-                "COMPLETED",
+                        paymentIntent.getId(),
+                        "Khám phá Vịnh Hạ Long 2 ngày 1 đêm", // Dữ liệu thật
+                "COMPLETED", // Ngày hiện tại
                 currentTotalAmount,
-                currentUserId
-        );
+                currentUserId,
+                new java.util.Date()
+                );
 
         // TODO: Gọi Controller/Service để lưu vào Firebase Firestore
         // Ví dụ: bookingController.saveRemoteBooking(newBooking);
