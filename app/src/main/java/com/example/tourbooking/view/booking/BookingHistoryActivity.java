@@ -1,7 +1,6 @@
-// File: view/booking/BookingHistoryActivity.java (Phiên bản chuẩn - Lọc trên Client)
+// File: view/booking/BookingHistoryActivity.java (Hoàn thiện tất cả chức năng M17)
 package com.example.tourbooking.view.booking;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -35,13 +34,14 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class BookingHistoryActivity extends AppCompatActivity {
 
     private RecyclerView rvBookingHistory;
     private BookingAdapter adapter;
-    private List<Booking> allUserBookings = new ArrayList<>(); // Danh sách gốc
-    private List<Booking> displayedBookings = new ArrayList<>(); // Danh sách hiển thị
+    private List<Booking> allUserBookings = new ArrayList<>(); // Danh sách gốc chứa TẤT CẢ booking
+    private List<Booking> displayedBookings = new ArrayList<>(); // Danh sách đã lọc để hiển thị
     private ProgressBar progressBar;
     private TextView tvNoHistory;
     private FirebaseFirestore db;
@@ -72,7 +72,7 @@ public class BookingHistoryActivity extends AppCompatActivity {
         setupRecyclerView();
         setupFilterChips();
         setupSwipeToRefresh();
-        setupItemTouchHelper();
+        setupItemTouchHelper(); // <-- Gọi hàm đã được hoàn thiện
 
         fetchBookingsFromFirestore();
     }
@@ -94,6 +94,7 @@ public class BookingHistoryActivity extends AppCompatActivity {
     private void fetchBookingsFromFirestore() {
         swipeRefreshLayout.setRefreshing(true);
         tvNoHistory.setVisibility(View.GONE);
+        rvBookingHistory.setVisibility(View.GONE);
 
         String userIdToQuery;
         FirebaseUser currentUser = mAuth.getCurrentUser();
@@ -103,7 +104,6 @@ public class BookingHistoryActivity extends AppCompatActivity {
             userIdToQuery = "DUMMY_USER_ID_123";
         }
 
-        // Câu truy vấn đơn giản, chỉ lọc theo userId, không cần index phức hợp
         db.collection("bookings")
                 .whereEqualTo("userId", userIdToQuery)
                 .get()
@@ -114,7 +114,6 @@ public class BookingHistoryActivity extends AppCompatActivity {
                         allUserBookings.clear();
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             Booking booking = document.toObject(Booking.class);
-                            // Kiểm tra an toàn để tránh crash
                             if (booking.getBookingDate() != null && booking.getStatus() != null && booking.getTourName() != null) {
                                 allUserBookings.add(booking);
                             }
@@ -132,14 +131,16 @@ public class BookingHistoryActivity extends AppCompatActivity {
 
         // 1. Lọc theo trạng thái
         int checkedChipId = chipGroupFilter.getCheckedChipId();
-        if (checkedChipId != R.id.chipAll) {
+        if (checkedChipId != -1 && checkedChipId != R.id.chipAll) { // -1 là trường hợp không có chip nào được chọn
             String statusFilter = "";
             if (checkedChipId == R.id.chipUpcoming) statusFilter = "UPCOMING";
             else if (checkedChipId == R.id.chipCompleted) statusFilter = "COMPLETED";
             else if (checkedChipId == R.id.chipCanceled) statusFilter = "CANCELED";
 
-            String finalStatusFilter = statusFilter;
-            tempList.removeIf(booking -> !booking.getStatus().equalsIgnoreCase(finalStatusFilter));
+            if (!statusFilter.isEmpty()) {
+                String finalStatusFilter = statusFilter;
+                tempList.removeIf(booking -> !booking.getStatus().equalsIgnoreCase(finalStatusFilter));
+            }
         }
 
         // 2. Lọc theo từ khóa tìm kiếm
@@ -166,8 +167,10 @@ public class BookingHistoryActivity extends AppCompatActivity {
 
         if (displayedBookings.isEmpty()) {
             tvNoHistory.setVisibility(View.VISIBLE);
+            rvBookingHistory.setVisibility(View.GONE);
         } else {
             tvNoHistory.setVisibility(View.GONE);
+            rvBookingHistory.setVisibility(View.VISIBLE);
         }
     }
 
@@ -179,7 +182,6 @@ public class BookingHistoryActivity extends AppCompatActivity {
         swipeRefreshLayout.setOnRefreshListener(this::fetchBookingsFromFirestore);
     }
 
-    // ... các hàm còn lại giữ nguyên
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_booking_history, menu);
@@ -192,6 +194,7 @@ public class BookingHistoryActivity extends AppCompatActivity {
                 searchView.clearFocus();
                 return true;
             }
+
             @Override
             public boolean onQueryTextChange(String newText) {
                 applyFiltersAndSort();
@@ -212,13 +215,64 @@ public class BookingHistoryActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    // === PHẦN CODE ĐÃ ĐƯỢC HOÀN THIỆN ===
     private void setupItemTouchHelper() {
-        // ... giữ nguyên ...
+        ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                return false; // Không cần kéo thả
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                int position = viewHolder.getAdapterPosition();
+                if (position == RecyclerView.NO_POSITION) {
+                    return; // Vị trí không hợp lệ, không làm gì cả
+                }
+
+                // Lấy item từ danh sách đang hiển thị trên màn hình
+                final Booking bookingToCancel = displayedBookings.get(position);
+
+                // Chỉ cho phép hủy các tour có trạng thái "UPCOMING"
+                if ("UPCOMING".equalsIgnoreCase(bookingToCancel.getStatus())) {
+                    performCancelAction(bookingToCancel);
+                } else {
+                    // Nếu trạng thái khác, không cho hủy và cho item trượt về vị trí cũ
+                    adapter.notifyItemChanged(position);
+                    Snackbar.make(rvBookingHistory, "Chỉ có thể hủy các tour Sắp tới.", Snackbar.LENGTH_LONG).show();
+                }
+            }
+        };
+        new ItemTouchHelper(simpleCallback).attachToRecyclerView(rvBookingHistory);
     }
-    private void cancelBooking(Booking booking) {
-        // ... giữ nguyên ...
+
+    private void performCancelAction(final Booking booking) {
+        // Cập nhật trạng thái trên Firestore
+        db.collection("bookings").document(booking.getId())
+                .update("status", "CANCELED")
+                .addOnSuccessListener(aVoid -> {
+                    // Hiển thị thông báo với lựa chọn hoàn tác
+                    Snackbar.make(rvBookingHistory, "Đã hủy đơn hàng.", Snackbar.LENGTH_LONG)
+                            .setAction("Hoàn tác", v -> undoCancelAction(booking))
+                            .show();
+                    // Tải lại toàn bộ dữ liệu từ Firestore để đảm bảo giao diện được cập nhật chính xác
+                    fetchBookingsFromFirestore();
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Lỗi: Không thể hủy đơn hàng.", Toast.LENGTH_SHORT).show();
+                    // Tải lại để item quay về trạng thái cũ nếu hủy thất bại
+                    fetchBookingsFromFirestore();
+                });
     }
-    private void undoCancelBooking(Booking booking, int position) {
-        // ... giữ nguyên ...
+
+    private void undoCancelAction(final Booking booking) {
+        // Cập nhật lại trạng thái trên Firebase về "UPCOMING"
+        db.collection("bookings").document(booking.getId())
+                .update("status", "UPCOMING")
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(this, "Đã hoàn tác.", Toast.LENGTH_SHORT).show();
+                    // Tải lại toàn bộ dữ liệu để đảm bảo tính nhất quán
+                    fetchBookingsFromFirestore();
+                });
     }
 }
