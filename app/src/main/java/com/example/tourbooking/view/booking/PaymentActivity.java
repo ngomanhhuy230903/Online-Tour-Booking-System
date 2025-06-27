@@ -17,6 +17,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.tourbooking.model.Booking;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.stripe.android.ApiResultCallback;
@@ -188,7 +189,20 @@ public class PaymentActivity extends AppCompatActivity {
                     PaymentIntent paymentIntent = result.getIntent();
                     PaymentIntent.Status status = paymentIntent.getStatus();
                     if (status == PaymentIntent.Status.Succeeded) {
+                        // Thanh toán thành công!
                         Toast.makeText(PaymentActivity.this, "Thanh toán thành công!", Toast.LENGTH_LONG).show();
+
+                        // BƯỚC 1: Lưu đơn hàng vào Database (Firebase & Room)
+                        saveBookingToDatabase(paymentIntent);
+
+                        // BƯỚC 2: Chuẩn bị dữ liệu và chuyển sang màn hình xác nhận
+                        Intent intent = new Intent(PaymentActivity.this, PaymentConfirmationActivity.class);
+                        intent.putExtra(PaymentConfirmationActivity.EXTRA_BOOKING_ID, paymentIntent.getId());
+                        intent.putExtra(PaymentConfirmationActivity.EXTRA_TOUR_NAME, "Khám phá Vịnh Hạ Long 2 ngày 1 đêm"); // Lấy tên tour thật
+                        intent.putExtra(PaymentConfirmationActivity.EXTRA_BOOKING_DATE, "17/06/2025"); // Lấy ngày thật
+                        startActivity(intent);
+                        finish(); // Đóng màn hình thanh toán
+
                     } else {
                         onPaymentFailed("Trạng thái thanh toán không thành công: " + status);
                     }
@@ -202,6 +216,28 @@ public class PaymentActivity extends AppCompatActivity {
         }
     }
 
+    private void saveBookingToDatabase(PaymentIntent paymentIntent) {
+        // TODO: Lấy userId của người dùng hiện tại từ Firebase Auth
+        String currentUserId = "some_user_id";
+
+        // Tạo đối tượng Booking
+        Booking newBooking = new Booking(
+                paymentIntent.getId(),
+                "Khám phá Vịnh Hạ Long 2 ngày 1 đêm", // Dữ liệu thật
+                new java.util.Date(), // Ngày hiện tại
+                "COMPLETED",
+                currentTotalAmount,
+                currentUserId
+        );
+
+        // TODO: Gọi Controller/Service để lưu vào Firebase Firestore
+        // Ví dụ: bookingController.saveRemoteBooking(newBooking);
+
+        // TODO: Sau khi lưu Firebase thành công, lưu vào Room để cache
+        // Ví dụ: bookingController.saveLocalBooking(newBooking);
+
+        Log.d(TAG, "Đã lưu đơn hàng với ID: " + paymentIntent.getId());
+    }
     private void onPaymentFailed(@Nullable String message) {
         if (message != null) {
             Log.e(TAG, "Payment failed: " + message);
