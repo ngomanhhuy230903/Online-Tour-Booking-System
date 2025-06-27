@@ -1,7 +1,8 @@
-// File: adapter/BookingAdapter.java
+// File: adapter/BookingAdapter.java (Cập nhật để xử lý click)
 package com.example.tourbooking.adapter;
 
 import android.content.Context;
+import android.content.Intent; // Import mới
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,7 +12,9 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.tourbooking.R;
-import com.example.tourbooking.model.Booking; // Chắc chắn import đúng model
+import com.example.tourbooking.model.Booking;
+import com.example.tourbooking.view.booking.BookingDetailActivity; // Import mới
+
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
@@ -58,6 +61,18 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
             tvBookingStatus = itemView.findViewById(R.id.tvBookingStatus);
             tvTourName = itemView.findViewById(R.id.tvTourName);
             tvBookingDate = itemView.findViewById(R.id.tvBookingDate);
+
+            // === THÊM SỰ KIỆN CLICK VÀO ĐÂY ===
+            itemView.setOnClickListener(v -> {
+                int position = getAdapterPosition();
+                if (position != RecyclerView.NO_POSITION) {
+                    Booking clickedBooking = bookingList.get(position);
+                    Intent intent = new Intent(context, BookingDetailActivity.class);
+                    // Truyền ID của đơn hàng được click sang màn hình chi tiết
+                    intent.putExtra(BookingDetailActivity.BOOKING_ID_EXTRA, clickedBooking.getId());
+                    context.startActivity(intent);
+                }
+            });
         }
 
         void bind(Booking booking) {
