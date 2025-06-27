@@ -269,7 +269,7 @@ public class BookingHistoryActivity extends AppCompatActivity {
             public boolean onQueryTextChange(String newText) {
                 if (newText.isEmpty() && !currentSearchQuery.isEmpty()) {
                     currentSearchQuery = "";
-                    loadInitialBookings(); // Reset và tải lại từ đầu
+                    loadInitialBookings();
                 }
                 return true;
             }
@@ -281,7 +281,7 @@ public class BookingHistoryActivity extends AppCompatActivity {
         if (item.getItemId() == R.id.action_sort) {
             currentSortDirection = (currentSortDirection == Query.Direction.DESCENDING) ? Query.Direction.ASCENDING : Query.Direction.DESCENDING;
             Toast.makeText(this, (currentSortDirection == Query.Direction.DESCENDING) ? "Sắp xếp: Mới nhất đến cũ nhất" : "Sắp xếp: Cũ nhất đến mới nhất", Toast.LENGTH_SHORT).show();
-            loadInitialBookings(); // Reset và tải lại từ đầu với chiều sắp xếp mới
+            loadInitialBookings();
             return true;
         }
         return super.onOptionsItemSelected(item);
