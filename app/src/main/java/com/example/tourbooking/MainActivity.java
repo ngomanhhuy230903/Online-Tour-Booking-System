@@ -9,6 +9,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+
+// Import các Activity cần thiết
+import com.example.tourbooking.view.booking.BookingHistoryActivity;
+import com.example.tourbooking.view.booking.FavoritesActivity;
 import com.example.tourbooking.view.booking.PaymentActivity;
 
 public class MainActivity extends AppCompatActivity {
@@ -19,20 +23,30 @@ public class MainActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
 
-        // --- BẮT ĐẦU PHẦN CODE ĐƯỢC THÊM VÀO ---
-
-        // 1. Tìm nút bấm bằng ID của nó
+        // Nút Test màn hình Thanh toán (M15)
         Button testPaymentButton = findViewById(R.id.btnTestPayment);
-
-        // 2. Thiết lập sự kiện khi nút được nhấn
         testPaymentButton.setOnClickListener(v -> {
-            // Tạo một Intent để mở PaymentActivity
             Intent intent = new Intent(MainActivity.this, PaymentActivity.class);
-            // Bắt đầu Activity mới
             startActivity(intent);
         });
 
-        // --- KẾT THÚC PHẦN CODE ĐƯỢC THÊM VÀO ---
+        // === BẮT ĐẦU PHẦN CODE MỚI ===
+
+        // Nút Test màn hình Lịch sử đặt tour (M17)
+        Button testHistoryButton = findViewById(R.id.btnTestHistory);
+        testHistoryButton.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, BookingHistoryActivity.class);
+            startActivity(intent);
+        });
+
+        // Nút Test màn hình Yêu thích (M19)
+        Button testFavoritesButton = findViewById(R.id.btnTestFavorites);
+        testFavoritesButton.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, FavoritesActivity.class);
+            startActivity(intent);
+        });
+
+        // === KẾT THÚC PHẦN CODE MỚI ===
 
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
