@@ -16,6 +16,9 @@
         android:theme="@style/Theme.TourBooking"
         tools:targetApi="31">
         <activity
+            android:name=".view.booking.FavoritesActivity"
+            android:exported="false" />
+        <activity
             android:name=".view.booking.BookingDetailActivity"
             android:exported="false" />
         <activity
