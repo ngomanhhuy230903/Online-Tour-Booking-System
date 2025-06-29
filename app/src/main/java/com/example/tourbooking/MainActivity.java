@@ -14,6 +14,7 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.tourbooking.view.booking.BookingHistoryActivity;
 import com.example.tourbooking.view.booking.FavoritesActivity;
 import com.example.tourbooking.view.booking.PaymentActivity;
+import com.example.tourbooking.view.review.ReviewFormActivity; // Import mới
 
 public class MainActivity extends AppCompatActivity {
 
@@ -30,8 +31,6 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        // === BẮT ĐẦU PHẦN CODE MỚI ===
-
         // Nút Test màn hình Lịch sử đặt tour (M17)
         Button testHistoryButton = findViewById(R.id.btnTestHistory);
         testHistoryButton.setOnClickListener(v -> {
@@ -46,8 +45,16 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        // === KẾT THÚC PHẦN CODE MỚI ===
+        // === BẮT ĐẦU PHẦN CODE MỚI ===
 
+        // Nút Test màn hình Form Đánh giá (M20)
+        Button testReviewButton = findViewById(R.id.btnTestReviewForm);
+        testReviewButton.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, ReviewFormActivity.class);
+            startActivity(intent);
+        });
+
+        // === KẾT THÚC PHẦN CODE MỚI ===
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());

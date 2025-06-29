@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".view.review.ReviewFormActivity">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar_review_form"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:navigationIcon="@drawable/ic_close"
+        app:title="Viết đánh giá" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Đánh giá tổng quan của bạn"
+                android:textAppearance="?attr/textAppearanceHeadline6" />
+
+            <RatingBar
+                android:id="@+id/ratingBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="16dp"
+                android:numStars="5"
+                android:stepSize="0.5" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:hint="Chia sẻ trải nghiệm của bạn..."
+                app:counterEnabled="true"
+                app:counterMaxLength="1000">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etReviewComment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="top"
+                    android:minLines="5"
+                    android:maxLength="1000" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <Button
+                android:id="@+id/btnUploadPhotos"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Thêm hình ảnh"
+                app:icon="@drawable/ic_add_photo" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvSelectedPhotos"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:itemCount="3"
+                tools:listitem="@layout/item_selected_photo"/>
+
+            <com.google.android.material.materialswitch.MaterialSwitch
+                android:id="@+id/switchAnonymous"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Gửi đánh giá ẩn danh" />
+
+            <ProgressBar
+                android:id="@+id/progressBarReview"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:indeterminate="true"
+                android:visibility="gone"
+                tools:visibility="visible"/>
+
+        </LinearLayout>
+    </ScrollView>
+
+    <Button
+        android:id="@+id/btnSubmitReview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:padding="12dp"
+        android:text="Gửi đánh giá" />
+
+</LinearLayout>

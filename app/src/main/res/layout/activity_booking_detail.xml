@@ -106,7 +106,15 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="24dp"
                     android:text="Tải hóa đơn (PDF)" />
-
+                <Button
+                    android:id="@+id/btnWriteReview"
+                    style="@style/Widget.Material3.Button.ElevatedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Viết đánh giá cho tour này"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
                 <Button
                     android:id="@+id/btnCancelBooking"
                     android:layout_width="match_parent"
