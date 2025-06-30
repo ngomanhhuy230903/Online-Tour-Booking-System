@@ -58,9 +58,20 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="Test Form Đánh giá (M20)"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/btnTestReviewsList"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnTestFavorites" />
+
+    <Button
+        android:id="@+id/btnTestReviewsList"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Test Danh sách Đánh giá (M21)"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnTestReviewForm" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
