@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_bookings"
+        android:icon="@drawable/ic_launcher_background"
+        android:title="My Bookings" />
+    <item
+        android:id="@+id/nav_favorites"
+        android:icon="@drawable/ic_launcher_background"
+        android:title="Favorites" />
+    <item
+        android:id="@+id/nav_support"
+        android:icon="@drawable/ic_launcher_background"
+        android:title="Support" />
+</menu>
