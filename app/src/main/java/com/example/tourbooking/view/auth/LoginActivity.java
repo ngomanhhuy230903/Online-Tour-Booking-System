@@ -14,6 +14,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.annotation.Nullable;
 
+import com.example.tourbooking.MainActivity;
 import com.example.tourbooking.R;
 import com.example.tourbooking.view.info.TermsActivity;
 
@@ -72,7 +73,7 @@ public class LoginActivity extends AppCompatActivity {
         if (requestCode == REQUEST_TERMS) {
             if (resultCode == RESULT_OK) {
                 // Người dùng đã chấp nhận điều khoản, vào Dashboard
-                Intent intent = new Intent(this, DashBoardActivity.class);
+                Intent intent = new Intent(this, MainActivity.class);
                 startActivity(intent);
                 finish();
             } else {
