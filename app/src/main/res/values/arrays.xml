@@ -7,4 +7,8 @@
         <item>Account</item>
         <item>Other</item>
     </string-array>
+    <array name="default_range">
+        <item>10000000</item> <!-- min -->
+        <item>50000000</item> <!-- max -->
+    </array>
 </resources> 

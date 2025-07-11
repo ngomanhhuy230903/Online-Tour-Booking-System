@@ -75,12 +75,12 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.Favori
         }
 
         void bind(Tour tour) {
-            tvTourName.setText(tour.tourName);
+            tvTourName.setText(tour.getTourName());
             NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
-            tvTourPrice.setText(currencyFormatter.format(tour.price));
+            tvTourPrice.setText(currencyFormatter.format(tour.getPrice()));
 
             Glide.with(itemView.getContext())
-                    .load(tour.thumbnailUrl)
+                    .load(tour.getThumbnailUrl())
                     .placeholder(R.color.placeholder_gray) // Màu nền tạm thời
                     .into(ivTourThumbnail);
         }
