@@ -12,4 +12,12 @@
     <string name="faq_search_hint">Search FAQs</string>
     <string name="faq_no_results">No FAQs found</string>
     <string name="faq_contact_support">Contact Support</string>
+    <string-array name="filter_options">
+        <item>Popular</item>
+        <item>Price: Low to High</item>
+        <item>Price: High to Low</item>
+        <item>Top Rated</item>
+    </string-array>
+    <string name="prompt_tour_type">Select Tour Type</string>
+    <string name="prompt_duration">Select Duration</string>
 </resources>

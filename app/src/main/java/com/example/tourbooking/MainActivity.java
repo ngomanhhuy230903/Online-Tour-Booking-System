@@ -14,6 +14,7 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.tourbooking.view.booking.BookingHistoryActivity;
 import com.example.tourbooking.view.booking.FavoritesActivity;
 import com.example.tourbooking.view.booking.PaymentActivity;
+import com.example.tourbooking.view.home.HomeActivity;
 import com.example.tourbooking.view.review.ReviewFormActivity;
 import com.example.tourbooking.view.review.ReviewsListActivity;
 
@@ -25,6 +26,14 @@ public class MainActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
 
+        // HomePage
+        Button btnHomepage = findViewById(R.id.btnTestHomePage);
+        btnHomepage.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+            startActivity(intent);
+        });
+
+        // Nút Test màn hình Thanh toán (M15)
         // ... (Code cho các nút cũ giữ nguyên)
         Button testPaymentButton = findViewById(R.id.btnTestPayment);
         testPaymentButton.setOnClickListener(v -> {

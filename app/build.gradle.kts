@@ -76,6 +76,15 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-// Thư viện Glide để tải ảnh
+
+    // Thư viện Glide để tải ảnh
     implementation("com.github.bumptech.glide:glide:4.16.0")
+
+    // GG Map
+    implementation ("com.google.android.gms:play-services-maps:18.2.0")
+    implementation(libs.play.services.location)
+
+    // Gson
+    implementation ("com.google.code.gson:gson:2.10.1")
+    implementation ("com.google.android.material:material:1.11.0")
 }
