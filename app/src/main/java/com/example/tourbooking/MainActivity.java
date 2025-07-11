@@ -15,7 +15,8 @@ import com.example.tourbooking.view.booking.BookingHistoryActivity;
 import com.example.tourbooking.view.booking.FavoritesActivity;
 import com.example.tourbooking.view.booking.PaymentActivity;
 import com.example.tourbooking.view.home.HomeActivity;
-import com.example.tourbooking.view.review.ReviewFormActivity; // Import mới
+import com.example.tourbooking.view.review.ReviewFormActivity;
+import com.example.tourbooking.view.review.ReviewsListActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -33,36 +34,41 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // Nút Test màn hình Thanh toán (M15)
+        // ... (Code cho các nút cũ giữ nguyên)
         Button testPaymentButton = findViewById(R.id.btnTestPayment);
         testPaymentButton.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, PaymentActivity.class);
             startActivity(intent);
         });
 
-        // Nút Test màn hình Lịch sử đặt tour (M17)
         Button testHistoryButton = findViewById(R.id.btnTestHistory);
         testHistoryButton.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, BookingHistoryActivity.class);
             startActivity(intent);
         });
 
-        // Nút Test màn hình Yêu thích (M19)
         Button testFavoritesButton = findViewById(R.id.btnTestFavorites);
         testFavoritesButton.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, FavoritesActivity.class);
             startActivity(intent);
         });
 
-        // === BẮT ĐẦU PHẦN CODE MỚI ===
-
-        // Nút Test màn hình Form Đánh giá (M20)
         Button testReviewButton = findViewById(R.id.btnTestReviewForm);
         testReviewButton.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, ReviewFormActivity.class);
+            intent.putExtra("TOUR_ID_EXTRA", "ioqvj18Na7GKrERhKZbv"); // ID tour của bạn
             startActivity(intent);
         });
 
-        // === KẾT THÚC PHẦN CODE MỚI ===
+        // Nút Test màn hình Danh sách Đánh giá (M21)
+        Button testReviewsListButton = findViewById(R.id.btnTestReviewsList);
+        testReviewsListButton.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, ReviewsListActivity.class);
+            // ĐÃ THAY THẾ ID TOUR CỦA BẠN VÀO ĐÂY
+            intent.putExtra("TOUR_ID_EXTRA", "ioqvj18Na7GKrERhKZbv");
+            startActivity(intent);
+        });
+
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());

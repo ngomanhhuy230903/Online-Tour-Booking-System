@@ -36,6 +36,9 @@
             android:name=".view.booking.BookingCalendarActivity"
             android:exported="false" />
         <activity
+            android:name=".view.review.ReviewsListActivity"
+            android:exported="false" />
+        <activity
             android:name=".view.review.ReviewFormActivity"
             android:exported="false" />
         <activity
@@ -58,7 +61,17 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
+        </activity> <!-- <activity -->
+        <!-- android:name=".view.auth.LoginActivity" -->
+        <!-- android:exported="true"> -->
+        <!-- <intent-filter> -->
+        <!-- <action android:name="android.intent.action.MAIN" /> -->
+        <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+        <!-- </intent-filter> -->
+        <!-- </activity> -->
+        <!-- <activity -->
+        <!-- android:name=".MainActivity" -->
+        <!-- android:exported="false" /> -->
         <activity
             android:name=".view.booking.PaymentActivity"
             android:exported="false" />
