@@ -80,9 +80,65 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="Test Danh sách Đánh giá (M21)"
+        app:layout_constraintBottom_toTopOf="@+id/btnTestLogin"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnTestReviewForm" />
+    <Button
+        android:id="@+id/btnTestLogin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Test Login "
+        app:layout_constraintBottom_toTopOf="@+id/btnTestDashb"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnTestReviewsList" />
 
+    <Button
+        android:id="@+id/btnTestDashb"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Test Dashb "
+        app:layout_constraintBottom_toTopOf="@+id/btnTestIti"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnTestLogin" />
+    <Button
+        android:id="@+id/btnTestIti"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Test Iti "
+        app:layout_constraintBottom_toTopOf="@+id/btnTestCompare"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnTestDashb" />
+    <Button
+        android:id="@+id/btnTestCompare"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Test Compare "
+        app:layout_constraintBottom_toTopOf="@+id/btnTestInsur"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnTestIti" />
+
+    <Button
+        android:id="@+id/btnTestInsur"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Test Insurance "
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnTestCompare" />
 </androidx.constraintlayout.widget.ConstraintLayout>
