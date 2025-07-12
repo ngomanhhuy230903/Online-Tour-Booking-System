@@ -11,12 +11,16 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 // Import các Activity cần thiết
+import com.example.tourbooking.view.tour.CompareTourActivity;
+import com.example.tourbooking.view.tour.DashBoardActivity;
+import com.example.tourbooking.view.auth.LoginActivity;
 import com.example.tourbooking.view.booking.BookingHistoryActivity;
 import com.example.tourbooking.view.booking.FavoritesActivity;
 import com.example.tourbooking.view.booking.PaymentActivity;
 import com.example.tourbooking.view.home.HomeActivity;
 import com.example.tourbooking.view.review.ReviewFormActivity;
 import com.example.tourbooking.view.review.ReviewsListActivity;
+import com.example.tourbooking.view.tour.ItineraryBuilderActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -69,7 +73,32 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
+        Button testLogin = findViewById(R.id.btnTestLogin);
+        testLogin.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            startActivity(intent);
+        });
+        Button testDashb = findViewById(R.id.btnTestDashb);
+        testDashb.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, DashBoardActivity.class);
+            startActivity(intent);
+        });
 
+        Button testIti = findViewById(R.id.btnTestIti);
+        testIti.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, ItineraryBuilderActivity.class);
+            startActivity(intent);
+        });
+        Button testCompare = findViewById(R.id.btnTestCompare);
+        testCompare.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, CompareTourActivity.class);
+            startActivity(intent);
+        });
+        Button testInsur = findViewById(R.id.btnTestInsur);
+        testInsur.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, CompareTourActivity.class);
+            startActivity(intent);
+        });
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
