@@ -12,6 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TourBooking"
         tools:targetApi="31">
+
         <activity
             android:name=".view.auth.RegisterActivity"
             android:exported="false" />
@@ -32,10 +33,28 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".view.profile.ProfileActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.profile.EditProfileActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.profile.ChangePasswordActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.auth.ChangePasswordActivity"
+            android:exported="false" />
+
+        <!-- Thêm các activity mới ở đây -->
+        <activity android:name=".SettingsActivity" android:exported="false" />
+        <activity android:name=".NotificationsActivity" android:exported="false" />
+        <activity android:name=".ChatSupportActivity" android:exported="false" />
+        <activity android:name=".FeedbackActivity" android:exported="false" />
+
     </application>
 
 </manifest>
