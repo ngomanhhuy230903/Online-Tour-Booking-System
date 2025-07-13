@@ -48,6 +48,13 @@
         <activity
             android:name=".view.auth.ChangePasswordActivity"
             android:exported="false" />
+
+        <!-- Thêm các activity mới ở đây -->
+        <activity android:name=".SettingsActivity" android:exported="false" />
+        <activity android:name=".NotificationsActivity" android:exported="false" />
+        <activity android:name=".ChatSupportActivity" android:exported="false" />
+        <activity android:name=".FeedbackActivity" android:exported="false" />
+
     </application>
 
 </manifest>

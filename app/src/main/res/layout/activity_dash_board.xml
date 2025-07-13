@@ -11,16 +11,70 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="16dp">
-        <!-- Profile Button -->
-        <ImageButton
-            android:id="@+id/btnProfile"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_gravity="end"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_avatar_placeholder"
-            android:contentDescription="Profile"
-            android:layout_marginBottom="8dp"/>
+
+        <!-- Row: Menu Button + Profile Button -->
+        <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="end"
+    android:layout_marginBottom="8dp">
+
+    <Button
+        android:id="@+id/btnMenu"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:text="Menu"
+        android:layout_gravity="center_vertical"
+        android:layout_marginEnd="8dp"/>
+
+    <ImageButton
+    android:id="@+id/btnSettings"
+    android:layout_width="48dp"
+    android:layout_height="48dp"
+    android:src="@android:drawable/ic_menu_preferences"
+    android:contentDescription="Settings"
+    android:background="?attr/selectableItemBackgroundBorderless"
+    android:layout_gravity="center_vertical"
+    android:layout_marginEnd="8dp"/>
+<ImageButton
+    android:id="@+id/btnNotifications"
+    android:layout_width="48dp"
+    android:layout_height="48dp"
+    android:src="@android:drawable/ic_dialog_email"
+    android:contentDescription="Notifications"
+    android:background="?attr/selectableItemBackgroundBorderless"
+    android:layout_gravity="center_vertical"
+    android:layout_marginEnd="8dp"/>
+<ImageButton
+    android:id="@+id/btnChat"
+    android:layout_width="48dp"
+    android:layout_height="48dp"
+    android:src="@android:drawable/ic_menu_send"
+    android:contentDescription="Chat"
+    android:background="?attr/selectableItemBackgroundBorderless"
+    android:layout_gravity="center_vertical"
+    android:layout_marginEnd="8dp"/>
+<ImageButton
+    android:id="@+id/btnFeedback"
+    android:layout_width="48dp"
+    android:layout_height="48dp"
+    android:src="@android:drawable/ic_menu_edit"
+    android:contentDescription="Feedback"
+    android:background="?attr/selectableItemBackgroundBorderless"
+    android:layout_gravity="center_vertical"
+    android:layout_marginEnd="8dp"/>
+
+    <ImageButton
+        android:id="@+id/btnProfile"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_avatar_placeholder"
+        android:contentDescription="Profile"
+        android:layout_gravity="center_vertical"/>
+</LinearLayout>
+
         <!-- 1. Reward Points -->
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
