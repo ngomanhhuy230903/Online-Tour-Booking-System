@@ -22,6 +22,9 @@ import com.example.tourbooking.view.review.ReviewFormActivity;
 import com.example.tourbooking.view.review.ReviewsListActivity;
 import com.example.tourbooking.view.tour.ItineraryBuilderActivity;
 import com.example.tourbooking.view.tour.TravelInsuranceActivity;
+import com.example.tourbooking.view.info.TermsActivity;
+import com.example.tourbooking.view.info.CompanyInfoActivity;
+import com.example.tourbooking.view.info.FAQActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -100,10 +103,46 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(MainActivity.this, TravelInsuranceActivity.class);
             startActivity(intent);
         });
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
+
+        // --- NEW TEST BUTTONS ---
+        Button btnTestTerms = findViewById(R.id.btnTestTerms);
+        btnTestTerms.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, TermsActivity.class);
+            startActivity(intent);
         });
+        Button btnTestCompanyInfo = findViewById(R.id.btnTestCompanyInfo);
+        btnTestCompanyInfo.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, CompanyInfoActivity.class);
+            startActivity(intent);
+        });
+        Button btnTestFAQ = findViewById(R.id.btnTestFAQ);
+        btnTestFAQ.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, FAQActivity.class);
+            startActivity(intent);
+        });
+        Button btnTestContact = findViewById(R.id.btnTestContact);
+        btnTestContact.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, com.example.tourbooking.view.info.ContactActivity.class);
+            startActivity(intent);
+        });
+        Button btnTestLanguage = findViewById(R.id.btnTestLanguage);
+        btnTestLanguage.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this,
+                    com.example.tourbooking.view.info.LanguageSettingsActivity.class);
+            startActivity(intent);
+        });
+        Button btnTestLogout = findViewById(R.id.btnTestLogout);
+        btnTestLogout.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this,
+                    com.example.tourbooking.view.info.LogoutConfirmationActivity.class);
+            startActivity(intent);
+        });
+        Button btnTestNetworkError = findViewById(R.id.btnTestNetworkError);
+        btnTestNetworkError.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, com.example.tourbooking.view.info.NetworkErrorActivity.class);
+            startActivity(intent);
+        });
+        // ĐÃ XÓA DÒNG XỬ LÝ INSETS VỚI ID main
+        // ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), ...);
     }
 }

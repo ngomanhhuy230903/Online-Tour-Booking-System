@@ -7,8 +7,14 @@
         <item>Account</item>
         <item>Other</item>
     </string-array>
+    <string-array name="languages">
+        <item>English</item>
+        <item>Spanish</item>
+        <item>French</item>
+        <item>Vietnamese</item>
+    </string-array>
     <array name="default_range">
-        <item>10000000</item> <!-- min -->
-        <item>50000000</item> <!-- max -->
+        <item>10000000</item> 
+        <item>50000000</item> 
     </array>
 </resources> 

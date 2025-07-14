@@ -102,6 +102,12 @@
         <activity
             android:name=".view.info.TermsActivity"
             android:exported="false" /> <!-- Google Maps API Key -->
+        <activity android:name=".view.info.CompanyInfoActivity" android:exported="false" />
+        <activity android:name=".view.info.FAQActivity" android:exported="false" />
+        <activity android:name=".view.info.ContactActivity" android:exported="false" />
+        <activity android:name=".view.info.LanguageSettingsActivity" android:exported="false" />
+        <activity android:name=".view.info.LogoutConfirmationActivity" android:exported="false" />
+        <activity android:name=".view.info.NetworkErrorActivity" android:exported="false" />
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyC5NZVY6wJAJ0IESmTw1U-wiP85FH_rydQ" />
