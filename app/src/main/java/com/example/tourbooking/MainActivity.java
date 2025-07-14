@@ -21,6 +21,7 @@ import com.example.tourbooking.view.home.HomeActivity;
 import com.example.tourbooking.view.review.ReviewFormActivity;
 import com.example.tourbooking.view.review.ReviewsListActivity;
 import com.example.tourbooking.view.tour.ItineraryBuilderActivity;
+import com.example.tourbooking.view.tour.TravelInsuranceActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -96,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
         });
         Button testInsur = findViewById(R.id.btnTestInsur);
         testInsur.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, CompareTourActivity.class);
+            Intent intent = new Intent(MainActivity.this, TravelInsuranceActivity.class);
             startActivity(intent);
         });
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
