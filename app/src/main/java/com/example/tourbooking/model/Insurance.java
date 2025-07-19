@@ -1,6 +1,8 @@
 package com.example.tourbooking.model;
 
-public class Insurance {
+import java.io.Serializable;
+
+public class Insurance implements Serializable {
     private String name;
     private String provider;
     private double price;
