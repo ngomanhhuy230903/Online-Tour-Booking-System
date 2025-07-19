@@ -2,9 +2,7 @@ package com.example.tourbooking.view.tour;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.*;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -12,7 +10,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.tourbooking.R;
 import com.example.tourbooking.adapter.TourAdapter;
 import com.example.tourbooking.model.Tour;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.*;
@@ -23,8 +20,8 @@ public class CompareTourActivity extends AppCompatActivity {
     private TourAdapter tourAdapter;
     private List<Tour> comparedTours = new ArrayList<>();
     private TextView tvTotalCompared;
-    private Spinner spinnerSortOptions;
     private FirebaseFirestore db;
+    private Button btnCompareSelected;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +30,7 @@ public class CompareTourActivity extends AppCompatActivity {
 
         rvCompareList = findViewById(R.id.rvCompareList);
         tvTotalCompared = findViewById(R.id.tvTotalCompared);
-        spinnerSortOptions = findViewById(R.id.spinnerSortOptions);
+        btnCompareSelected = findViewById(R.id.btnCompareSelected);
 
         rvCompareList.setLayoutManager(new LinearLayoutManager(this));
         tourAdapter = new TourAdapter(this, comparedTours);
@@ -41,77 +38,47 @@ public class CompareTourActivity extends AppCompatActivity {
 
         db = FirebaseFirestore.getInstance();
 
-        setupSortOptions();
         loadComparedTours();
 
         findViewById(R.id.btnExportCSV).setOnClickListener(v -> exportCSV());
         findViewById(R.id.btnShareComparison).setOnClickListener(v -> shareComparison());
-    }
-
-    private void setupSortOptions() {
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.sort_options, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerSortOptions.setAdapter(adapter);
-
-        spinnerSortOptions.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                sortTours(position);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
-        });
+        btnCompareSelected.setOnClickListener(v -> compareSelectedTours());
     }
 
     private void loadComparedTours() {
-        db.collection("compareTours")
-                .document("demoCompare") // Hoặc userId nếu có Auth
+        db.collection("tours")
                 .get()
                 .addOnSuccessListener(snapshot -> {
-                    if (snapshot.exists()) {
-                        List<String> tourIds = (List<String>) snapshot.get("tours");
-                        if (tourIds != null && !tourIds.isEmpty()) {
-                            comparedTours.clear();
-                            for (String tourId : tourIds) {
-                                db.collection("tours").document(tourId)
-                                        .get()
-                                        .addOnSuccessListener(tourSnap -> {
-                                            if (tourSnap.exists()) {
-                                                Tour tour = tourSnap.toObject(Tour.class);
-                                                if (tour != null) {
-                                                    comparedTours.add(tour);
-                                                    tourAdapter.notifyDataSetChanged();
-                                                    tvTotalCompared.setText("Comparing: " + comparedTours.size() + " tours");
-                                                }
-                                            }
-                                        });
-                            }
-                        } else {
-                            tvTotalCompared.setText("No tours selected for comparison.");
+                    comparedTours.clear();
+                    snapshot.forEach(tourSnap -> {
+                        Tour tour = tourSnap.toObject(Tour.class);
+                        if (tour != null) {
+                            comparedTours.add(tour);
                         }
-                    } else {
-                        tvTotalCompared.setText("Comparison list not found.");
-                    }
+                    });
+                    tourAdapter.notifyDataSetChanged();
+                    tvTotalCompared.setText("Total tours: " + comparedTours.size());
                 })
-                .addOnFailureListener(e -> Toast.makeText(this, "Failed to load comparison list.", Toast.LENGTH_SHORT).show());
+                .addOnFailureListener(e -> Toast.makeText(this, "Failed to load tours", Toast.LENGTH_SHORT).show());
     }
 
-    private void sortTours(int option) {
-        switch (option) {
-            case 0:
-                Collections.sort(comparedTours, Comparator.comparingDouble(Tour::getPrice));
-                break;
-            case 1:
-                Collections.sort(comparedTours, (a, b) -> Double.compare(b.getRating(), a.getRating()));
-                break;
-            case 2:
-                Collections.sort(comparedTours, Comparator.comparingInt(Tour::getDays));
-                break;
+    private void compareSelectedTours() {
+        Set<Tour> selectedTours = tourAdapter.getSelectedTours();
+        if (selectedTours.size() != 2) {
+            Toast.makeText(this, "Please select exactly 2 tours to compare.", Toast.LENGTH_SHORT).show();
+            return;
         }
-        tourAdapter.notifyDataSetChanged();
+
+        Iterator<Tour> iterator = selectedTours.iterator();
+        Tour tour1 = iterator.next();
+        Tour tour2 = iterator.next();
+
+        Intent intent = new Intent(this, CompareResultActivity.class);
+        intent.putExtra("tour1", tour1);
+        intent.putExtra("tour2", tour2);
+        startActivity(intent);
     }
+
 
     private void exportCSV() {
         StringBuilder sb = new StringBuilder("Name,Price,Rating,Days\n");
@@ -122,7 +89,6 @@ public class CompareTourActivity extends AppCompatActivity {
                     .append(t.getDays()).append("\n");
         }
 
-        // 🚧 Ghi vào file hoặc export tùy platform (tạm thời toast)
         Toast.makeText(this, "CSV exported (simulated)", Toast.LENGTH_SHORT).show();
     }
 

@@ -99,13 +99,11 @@ public class TravelInsuranceActivity extends AppCompatActivity {
             return;
         }
 
-        // Start comparison activity or show dialog
-        StringBuilder result = new StringBuilder("Comparing:\n");
-        for (Insurance pkg : selectedPackages) {
-            result.append(pkg.getName()).append(" - ").append(pkg.getPrice()).append("đ\n");
-        }
-        Toast.makeText(this, result.toString(), Toast.LENGTH_LONG).show();
+        Intent intent = new Intent(this, CompareInsuranceActivity.class);
+        intent.putExtra("selectedPackages", new ArrayList<>(selectedPackages));
+        startActivity(intent);
     }
+
 
     private void loadMockData() {
         insuranceList.add(new Insurance("Basic Travel Protect", "AIA", 120000));

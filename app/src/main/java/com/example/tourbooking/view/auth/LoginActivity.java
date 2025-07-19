@@ -1,6 +1,7 @@
 package com.example.tourbooking.view.auth;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -51,7 +52,16 @@ public class LoginActivity extends AppCompatActivity {
                             if (storedPassword != null && storedPassword.equals(password)) {
                                 Toast.makeText(this, "Login successful!", Toast.LENGTH_SHORT).show();
 
-                                // ✅ Chuyển thẳng vào HomeActivity
+                                String userId = document.getId();
+                                String user = document.getString("userName");
+                                String fullName = document.getString("fullName");
+
+                                SharedPreferences prefs = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+                                SharedPreferences.Editor editor = prefs.edit();
+                                editor.putString("userId", userId);
+                                editor.putString("username", user);
+                                editor.putString("fullName", fullName);
+                                editor.apply();
                                 Intent intent = new Intent(this, HomeActivity.class);
                                 startActivity(intent);
                                 finish();

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:stretchColumns="1,2,3">
+
+        <!-- Header -->
+        <TableRow>
+            <TextView
+                android:text="Attribute"
+                android:textStyle="bold"
+                android:padding="8dp"
+                android:gravity="center"/>
+
+            <TextView
+                android:id="@+id/tvTour1Name"
+                android:text="Tour 1"
+                android:textStyle="bold"
+                android:padding="8dp"
+                android:gravity="center"
+                android:maxLines="3"
+                android:ellipsize="end"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <TextView
+                android:id="@+id/tvTour2Name"
+                android:text="Tour 2"
+                android:textStyle="bold"
+                android:padding="8dp"
+                android:gravity="center"
+                android:maxLines="3"
+                android:ellipsize="end"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+        </TableRow>
+
+        <!-- Price -->
+        <TableRow>
+            <TextView android:text="Price ($)" android:padding="8dp"/>
+            <TextView android:id="@+id/tvPrice1" android:gravity="center" android:padding="8dp"/>
+            <TextView android:id="@+id/tvPriceCompare" android:gravity="center" android:padding="8dp"/>
+            <TextView android:id="@+id/tvPrice2" android:gravity="center" android:padding="8dp"/>
+        </TableRow>
+
+        <!-- Rating -->
+        <TableRow>
+            <TextView android:text="Rating" android:padding="8dp"/>
+            <TextView android:id="@+id/tvRating1" android:gravity="center" android:padding="8dp"/>
+            <TextView android:id="@+id/tvRatingCompare" android:gravity="center" android:padding="8dp"/>
+            <TextView android:id="@+id/tvRating2" android:gravity="center" android:padding="8dp"/>
+        </TableRow>
+
+        <!-- Days -->
+        <TableRow>
+            <TextView android:text="Days" android:padding="8dp"/>
+            <TextView android:id="@+id/tvDays1" android:gravity="center" android:padding="8dp"/>
+            <TextView android:id="@+id/tvDaysCompare" android:gravity="center" android:padding="8dp"/>
+            <TextView android:id="@+id/tvDays2" android:gravity="center" android:padding="8dp"/>
+        </TableRow>
+
+    </TableLayout>
+
+</ScrollView>
