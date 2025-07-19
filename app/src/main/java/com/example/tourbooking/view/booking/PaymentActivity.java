@@ -40,7 +40,7 @@ import java.util.Locale;
 public class PaymentActivity extends AppCompatActivity {
 
     private static final String TAG = "PaymentActivity";
-    private static final String BACKEND_URL = "https://lackadaisical-lively-ambulance.glitch.me/create-payment-intent";
+    private static final String BACKEND_URL = "https://tourbooking-api-huy.onrender.com/create-payment-intent";
 
     private MaterialToolbar toolbar;
     private TextView tvTourName, tvBookingDate, tvGuestCount;
