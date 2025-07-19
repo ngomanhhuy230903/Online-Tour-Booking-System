@@ -8,7 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.example.tourbooking.R;
-import com.example.tourbooking.view.info.TermsActivity;
+//import com.example.tourbooking.view.info.TermsActivity;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
@@ -45,10 +45,10 @@ public class RegisterActivity extends AppCompatActivity {
         loginRedirectLink = findViewById(R.id.loginRedirectLink);
 
         // Nhấn vào checkbox để xem điều khoản
-        termsCheckbox.setOnClickListener(v -> {
-            Intent intent = new Intent(this, TermsActivity.class);
-            startActivity(intent);
-        });
+//        termsCheckbox.setOnClickListener(v -> {
+//            Intent intent = new Intent(this, TermsActivity.class);
+//            startActivity(intent);
+//        });
 
         // Đăng ký
         registerButton.setOnClickListener(v -> {

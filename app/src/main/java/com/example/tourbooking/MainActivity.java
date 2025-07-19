@@ -22,9 +22,9 @@ import com.example.tourbooking.view.review.ReviewFormActivity;
 import com.example.tourbooking.view.review.ReviewsListActivity;
 import com.example.tourbooking.view.tour.ItineraryBuilderActivity;
 import com.example.tourbooking.view.tour.TravelInsuranceActivity;
-import com.example.tourbooking.view.info.TermsActivity;
-import com.example.tourbooking.view.info.CompanyInfoActivity;
-import com.example.tourbooking.view.info.FAQActivity;
+//import com.example.tourbooking.view.info.TermsActivity;
+//import com.example.tourbooking.view.info.CompanyInfoActivity;
+//import com.example.tourbooking.view.info.FAQActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -105,21 +105,21 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // --- NEW TEST BUTTONS ---
-        Button btnTestTerms = findViewById(R.id.btnTestTerms);
-        btnTestTerms.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, TermsActivity.class);
-            startActivity(intent);
-        });
-        Button btnTestCompanyInfo = findViewById(R.id.btnTestCompanyInfo);
-        btnTestCompanyInfo.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, CompanyInfoActivity.class);
-            startActivity(intent);
-        });
-        Button btnTestFAQ = findViewById(R.id.btnTestFAQ);
-        btnTestFAQ.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, FAQActivity.class);
-            startActivity(intent);
-        });
+//        Button btnTestTerms = findViewById(R.id.btnTestTerms);
+//        btnTestTerms.setOnClickListener(v -> {
+//            Intent intent = new Intent(MainActivity.this, TermsActivity.class);
+//            startActivity(intent);
+//        });
+//        Button btnTestCompanyInfo = findViewById(R.id.btnTestCompanyInfo);
+//        btnTestCompanyInfo.setOnClickListener(v -> {
+//            Intent intent = new Intent(MainActivity.this, CompanyInfoActivity.class);
+//            startActivity(intent);
+//        });
+//        Button btnTestFAQ = findViewById(R.id.btnTestFAQ);
+//        btnTestFAQ.setOnClickListener(v -> {
+//            Intent intent = new Intent(MainActivity.this, FAQActivity.class);
+//            startActivity(intent);
+//        });
         Button btnTestContact = findViewById(R.id.btnTestContact);
         btnTestContact.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, com.example.tourbooking.view.info.ContactActivity.class);

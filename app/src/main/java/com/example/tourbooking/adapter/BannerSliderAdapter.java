@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.tourbooking.R;
 import android.widget.ImageView;
 import com.bumptech.glide.Glide;
-
 import java.util.List;
 
 public class BannerSliderAdapter extends RecyclerView.Adapter<BannerSliderAdapter.BannerViewHolder> {

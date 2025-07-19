@@ -3,7 +3,6 @@ package com.example.tourbooking;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -98,7 +97,7 @@ public class NotificationsActivity extends AppCompatActivity {
         // Dữ liệu mẫu với icon và trạng thái đọc
         notifications.add(new NotificationItem("Notification 1", "2h ago", R.drawable.ic_calendar, true));
         notifications.add(new NotificationItem("Notification 2", "6h ago", R.drawable.ic_chat, false));
-        notifications.add(new NotificationItem("Notification 3", "1d ago", R.drawable.ic_warning, false));
+        notifications.add(new NotificationItem("Notification 3", "1d ago", R.drawable.ic_warning_2, false));
         notifications.add(new NotificationItem("Notification 4", "2d ago", R.drawable.ic_chat, false));
         adapter.notifyDataSetChanged();
     }
