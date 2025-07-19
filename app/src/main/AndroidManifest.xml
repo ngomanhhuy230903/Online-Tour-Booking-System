@@ -102,15 +102,34 @@
         <activity
             android:name=".view.auth.LoginActivity"
             android:exported="false" />
+<!--        <activity-->
+<!--            android:name=".view.profile.ProfileActivity"-->
+<!--            android:exported="false" />-->
+<!--        <activity-->
+<!--            android:name=".view.profile.EditProfileActivity"-->
+<!--            android:exported="false" />-->
+<!--        <activity-->
+<!--            android:name=".view.info.TermsActivity"-->
+<!--            android:exported="false" />-->
+<!--        <activity-->
+<!--            android:name=".view.info.CompanyInfoActivity"-->
+<!--            android:exported="false" />-->
+<!--        <activity-->
+<!--            android:name=".view.profile.ChangePasswordActivity"-->
+<!--            android:exported="false" />-->
         <activity
-            android:name=".view.info.TermsActivity"
-            android:exported="false" /> <!-- Google Maps API Key -->
-        <activity
-            android:name=".view.info.CompanyInfoActivity"
+            android:name=".view.auth.ChangePasswordActivity"
             android:exported="false" />
-        <activity
-            android:name=".view.info.FAQActivity"
-            android:exported="false" />
+
+        <!-- Thêm các activity mới ở đây -->
+        <activity android:name=".SettingsActivity" android:exported="false" />
+        <activity android:name=".NotificationsActivity" android:exported="false" />
+        <activity android:name=".ChatSupportActivity" android:exported="false" />
+        <activity android:name=".FeedbackActivity" android:exported="false" />
+
+<!--        <activity-->
+<!--            android:name=".view.info.FAQActivity"-->
+<!--            android:exported="false" />-->
         <activity
             android:name=".view.info.ContactActivity"
             android:exported="false" />

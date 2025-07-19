@@ -1,6 +1,6 @@
 plugins {
-    id("com.android.application")
-    id("com.google.gms.google-services")
+    alias(libs.plugins.android.application)
+    id("com.google.gms.google-services") // Đảm bảo bạn có dòng này
 }
 
 android {
@@ -15,9 +15,6 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-
-        // === THAY ĐỔI 1: BẬT HỖ TRỢ MULTIDEX ===
-        multiDexEnabled = true
     }
 
     buildTypes {
@@ -30,33 +27,30 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
 }
 
 dependencies {
 
-    // === THAY ĐỔI 2: CHUẨN HÓA CÁC THƯ VIỆN CỐT LÕI ===
-    // Sử dụng các phiên bản cụ thể, ổn định thay cho libs.* để tránh xung đột
-    implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("com.google.android.material:material:1.11.0")
-    implementation("androidx.activity:activity:1.8.0")
-    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
-    implementation("com.android.volley:volley:1.2.1")
-    implementation("androidx.cardview:cardview:1.0.0")
-    implementation("androidx.recyclerview:recyclerview:1.3.2")
-    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
-
-    // --- Firebase BOM (Giữ các thư viện Firebase đồng bộ) ---
+    implementation(libs.appcompat)
+    implementation(libs.material)
+    implementation(libs.activity)
+    implementation(libs.constraintlayout)
+    implementation(libs.volley)
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.ext.junit)
+    androidTestImplementation(libs.espresso.core)
+    // --- Firebase (Phiên bản Java, cú pháp Kotlin DSL) ---
     implementation(platform("com.google.firebase:firebase-bom:33.1.0"))
     implementation("com.google.firebase:firebase-firestore")
     implementation("com.google.firebase:firebase-auth")
-    implementation("com.google.firebase:firebase-storage")
 
     // --- Database Local (Room) ---
     val room_version = "2.6.1"
     implementation("androidx.room:room-runtime:$room_version")
+    // Quan trọng: Với code Java, chúng ta vẫn dùng annotationProcessor
     annotationProcessor("androidx.room:room-compiler:$room_version")
 
     // --- Thanh toán (Stripe) ---
@@ -66,25 +60,10 @@ dependencies {
     implementation("com.journeyapps:zxing-android-embedded:4.3.0")
 
     // --- Các thư viện hữu ích khác của Android Jetpack ---
-    implementation("androidx.lifecycle:lifecycle-viewmodel:2.6.2") // Dùng phiên bản tương thích
-    implementation("androidx.lifecycle:lifecycle-livedata:2.6.2") // Dùng phiên bản tương thích
-
-    // === THAY ĐỔI 3: THÊM THƯ VIỆN MULTIDEX ===
-    implementation("androidx.multidex:multidex:2.0.1")
-
-    // --- Thư viện Test ---
-    testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-
-    // Thư viện Glide để tải ảnh
-    implementation("com.github.bumptech.glide:glide:4.16.0")
-
-    // GG Map
-    implementation ("com.google.android.gms:play-services-maps:18.2.0")
-    implementation(libs.play.services.location)
-
-    // Gson
-    implementation ("com.google.code.gson:gson:2.10.1")
-    implementation ("com.google.android.material:material:1.11.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel:2.8.1")
+    implementation("androidx.lifecycle:lifecycle-livedata:2.8.1")
+    implementation("androidx.cardview:cardview:1.0.0")
+    implementation("androidx.recyclerview:recyclerview:1.3.2")
+    implementation("de.hdodenhof:circleimageview:3.1.0")
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
 }
