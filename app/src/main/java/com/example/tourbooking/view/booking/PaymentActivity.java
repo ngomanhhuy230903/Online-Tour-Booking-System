@@ -55,11 +55,17 @@ public class PaymentActivity extends AppCompatActivity {
     private Stripe stripe;
     private RequestQueue volleyQueue;
     private double currentTotalAmount = 0;
-
+    private String tourName, guestCount, selectedDate;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_payment);
+
+        Intent intent = getIntent();
+        tourName = intent.getStringExtra("TOUR_NAME");
+        guestCount = intent.getStringExtra("GUEST_COUNT");
+        selectedDate = intent.getStringExtra("SELECTED_DATE");
+        currentTotalAmount = intent.getDoubleExtra("TOTAL_AMOUNT", 0.0);
 
         initializeViews();
         populateData();
@@ -67,15 +73,12 @@ public class PaymentActivity extends AppCompatActivity {
 
         volleyQueue = Volley.newRequestQueue(this);
 
-        // --- DÒNG CODE GÂY LỖI ĐÃ ĐƯỢC SỬA LẠI ---
-        // Lấy lại Publishable Key đã được cấu hình trong MyApplication
         stripe = new Stripe(
                 getApplicationContext(),
                 PaymentConfiguration.getInstance(getApplicationContext()).getPublishableKey()
         );
     }
 
-    // ... (Toàn bộ các hàm còn lại giữ nguyên không thay đổi)
 
     private void initializeViews() {
         toolbar = findViewById(R.id.toolbar_payment);
@@ -102,10 +105,14 @@ public class PaymentActivity extends AppCompatActivity {
     }
 
     private void populateData() {
-        tvTourName.setText("Tour khám phá Vịnh Hạ Long 2 ngày 1 đêm");
-        tvBookingDate.setText("Ngày đi: 17/06/2025");
-        tvGuestCount.setText("Số khách: 2 người lớn");
-        updatePrice(1000000, 100000, 150000, 0);
+        tvTourName.setText(tourName);
+        tvBookingDate.setText("Ngày đi: " + selectedDate);
+        tvGuestCount.setText("Số khách: " + guestCount);
+
+        // Giả sử thuế và phí dịch vụ là cố định hoặc tính theo %
+        double tax = currentTotalAmount * 0.1; // 10% thuế
+        double serviceFee = 150000; // phí dịch vụ
+        updatePrice(currentTotalAmount, tax, serviceFee, 0);
     }
 
     private void setupClickListeners() {
