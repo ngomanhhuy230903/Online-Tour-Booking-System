@@ -12,11 +12,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.annotation.Nullable;
 
 import com.example.tourbooking.MainActivity;
 import com.example.tourbooking.R;
-import com.example.tourbooking.view.info.TermsActivity;
+
+import android.content.SharedPreferences;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -26,8 +26,6 @@ public class LoginActivity extends AppCompatActivity {
     // Dữ liệu mẫu để kiểm tra
     private final String correctUsername = "admin";
     private final String correctPassword = "123456";
-
-    private static final int REQUEST_TERMS = 100;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,17 +43,26 @@ public class LoginActivity extends AppCompatActivity {
             String username = editTextUsername.getText().toString().trim();
             String password = editTextPassword.getText().toString().trim();
 
-            if (username.equals(correctUsername) && password.equals(correctPassword)) {
+            SharedPreferences prefs = getSharedPreferences("profile", MODE_PRIVATE);
+            String savedUsername = prefs.getString("fullName", "admin");
+            String savedPassword = prefs.getString("password", "123456");
+
+            // Chấp nhận đăng nhập nếu là tài khoản mặc định hoặc trùng với profile đã lưu
+            if ((username.equals("admin") && password.equals("123456")) ||
+                    (username.equals(savedUsername) && password.equals(savedPassword))) {
                 Toast.makeText(this, "Login successful!", Toast.LENGTH_SHORT).show();
-                // Mở TermsActivity để người dùng chấp nhận điều khoản trước khi vào Dashboard
-                Intent intent = new Intent(this, TermsActivity.class);
-                startActivityForResult(intent, REQUEST_TERMS);
+                Intent intent = new Intent(this, DashBoardActivity.class);
+                startActivity(intent);
+                finish();
             } else {
                 Toast.makeText(this, "Invalid credentials", Toast.LENGTH_SHORT).show();
             }
         });
         forgotPassword.setOnClickListener(v -> {
             // Ví dụ: mở ForgotPasswordActivity
+            SharedPreferences prefs = getSharedPreferences("profile", MODE_PRIVATE);
+            prefs.edit().putString("password", "123456").apply();
+            Toast.makeText(this, "Password has been reset to 123456", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(this, ForgotPasswordActivity.class);
             startActivity(intent);
         });
@@ -65,20 +72,5 @@ public class LoginActivity extends AppCompatActivity {
             Intent intent = new Intent(this, RegisterActivity.class);
             startActivity(intent);
         });
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_TERMS) {
-            if (resultCode == RESULT_OK) {
-                // Người dùng đã chấp nhận điều khoản, vào Dashboard
-                Intent intent = new Intent(this, MainActivity.class);
-                startActivity(intent);
-                finish();
-            } else {
-                Toast.makeText(this, "You must accept terms to continue", Toast.LENGTH_SHORT).show();
-            }
-        }
     }
 }

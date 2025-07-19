@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scrollView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:id="@+id/itineraryContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Itinerary Date -->
+        <TextView
+            android:text="Itinerary Date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"/>
+        <DatePicker
+            android:id="@+id/itineraryDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:calendarViewShown="true" />
+
+        <!-- Itinerary Items -->
+        <TextView
+            android:text="Itinerary Items"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_marginTop="12dp" />
+
+        <LinearLayout
+            android:id="@+id/itemListContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+
+        <!-- Add Item Button -->
+        <Button
+            android:id="@+id/addItemButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Add Activity"
+            android:layout_marginTop="12dp"/>
+
+        <!-- Estimated Cost -->
+        <TextView
+            android:text="Estimated Cost:"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"/>
+        <TextView
+            android:id="@+id/estimatedCost"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0.0"
+            android:textStyle="bold" />
+
+        <!-- Total Days -->
+        <TextView
+            android:text="Total Days:"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"/>
+        <TextView
+            android:id="@+id/totalDays"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="1"
+            android:textStyle="bold" />
+
+        <!-- Edit Mode Toggle -->
+        <CheckBox
+            android:id="@+id/editModeToggle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Edit Mode"
+            android:layout_marginTop="12dp" />
+
+        <!-- Download PDF and Share -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginTop="16dp">
+
+            <Button
+                android:id="@+id/downloadPDF"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="Download PDF" />
+
+            <Button
+                android:id="@+id/shareItinerary"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="Share" />
+            <Button
+                android:id="@+id/saveItinerary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Save Itinerary"
+                android:layout_marginTop="12dp"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>

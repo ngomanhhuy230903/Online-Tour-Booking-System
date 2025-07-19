@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="32dp"
+    tools:context=".view.tour.TourDetailsActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Title -->
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tour Details"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Main Image + Gallery -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/ivMainImage"
+                android:layout_width="0dp"
+                android:layout_height="180dp"
+                android:layout_weight="1"
+                android:scaleType="centerCrop" />
+
+            <LinearLayout
+                android:id="@+id/galleryContainer"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_marginStart="8dp"
+                android:gravity="center_vertical" />
+        </LinearLayout>
+
+        <!-- Tour Name -->
+        <TextView
+            android:id="@+id/tvTourName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Amazing Beach Tour"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp" />
+
+        <!-- Description -->
+        <TextView
+            android:id="@+id/tvDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Enjoy a relaxing beach day with all essentials provided. Detailed info about the tour, including amenities, activities, and local culture."
+            android:layout_marginTop="8dp" />
+
+        <!-- Itinerary -->
+        <TextView
+            android:text="Itinerary:"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/tvItinerary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="• Day 1: Arrival, Beach Time\n• Day 2: Local Tour, Water Sports\n• Day 3: Departure" />
+
+        <!-- Price Breakdown -->
+        <TextView
+            android:text="Price Breakdown:"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/tvPrices"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Base Price: $200   Taxes: $20   Fees: $10" />
+
+        <!-- Included/Excluded -->
+        <TextView
+            android:text="Included"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="4dp">
+
+            <TextView
+                android:id="@+id/tvIncluded"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+        <TextView
+            android:text="Excluded"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="4dp">
+
+            <TextView
+                android:id="@+id/tvExcluded"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+        <!-- Rating -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:text="Reviews:"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:id="@+id/ratingNumber"
+                android:text="4.5"
+                android:textStyle="bold"
+                android:layout_marginStart="8dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <RatingBar
+                android:id="@+id/ratingBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:numStars="5"
+                android:rating="4.5"
+                android:isIndicator="true"
+                android:scaleX="0.7"
+                android:scaleY="0.7"
+                android:layout_marginStart="6dp"
+                style="?android:attr/ratingBarStyleSmall" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnViewMap"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="DIRECTIONS AND LOCATIONS"
+            android:textAllCaps="true"
+            android:layout_marginTop="24dp"
+            android:backgroundTint="@color/purple_500"
+            android:textColor="@android:color/white"
+            android:drawableStart="@drawable/ic_location"
+            android:drawablePadding="8dp" />
+
+        <!-- Book Now -->
+        <Button
+            android:id="@+id/btnBookNow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="BOOK NOW"
+            android:textAllCaps="true"
+            android:layout_marginTop="24dp"
+            android:backgroundTint="@android:color/white"
+            android:textColor="#000"
+            android:background="@drawable/edittext_border" />
+    </LinearLayout>
+</ScrollView>

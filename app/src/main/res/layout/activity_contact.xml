@@ -11,64 +11,75 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:title="@string/terms_title" />
+        app:title="Contact Us" />
 
     <EditText
-        android:id="@+id/searchInput"
+        android:id="@+id/nameInput"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="@string/terms_search_hint"
+        android:hint="Your Name"
         android:maxLength="100"
         app:layout_constraintTop_toBottomOf="@id/toolbar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_margin="16dp" />
 
-    <TextView
-        android:id="@+id/lastUpdated"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/terms_last_updated"
-        app:layout_constraintTop_toBottomOf="@id/searchInput"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp" />
-
-    <Button
-        android:id="@+id/print"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/terms_print"
-        app:layout_constraintTop_toBottomOf="@id/searchInput"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginEnd="16dp"
-        android:layout_marginTop="8dp" />
-
-    <SeekBar
-        android:id="@+id/fontSizeSlider"
+    <EditText
+        android:id="@+id/emailInput"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/lastUpdated"
+        android:hint="Your Email"
+        android:maxLength="100"
+        android:inputType="textEmailAddress"
+        app:layout_constraintTop_toBottomOf="@id/nameInput"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_margin="16dp" />
 
-    <ScrollView
-        android:id="@+id/scrollView"
+    <EditText
+        android:id="@+id/subjectInput"
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@id/fontSizeSlider"
-        app:layout_constraintBottom_toTopOf="@id/bottomButtons"
+        android:layout_height="wrap_content"
+        android:hint="Subject"
+        android:maxLength="200"
+        app:layout_constraintTop_toBottomOf="@id/emailInput"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="16dp" />
 
-        <TextView
-            android:id="@+id/terms"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/terms_placeholder"
-            android:padding="16dp" />
-    </ScrollView>
+    <EditText
+        android:id="@+id/messageTextarea"
+        android:layout_width="0dp"
+        android:layout_height="150dp"
+        android:hint="Your Message"
+        android:maxLength="1000"
+        android:gravity="top"
+        android:inputType="textMultiLine"
+        app:layout_constraintTop_toBottomOf="@id/subjectInput"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="16dp" />
+
+    <EditText
+        android:id="@+id/phoneInput"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Your Phone (Optional)"
+        android:maxLength="20"
+        android:inputType="phone"
+        app:layout_constraintTop_toBottomOf="@id/messageTextarea"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="16dp" />
+
+    <com.google.android.gms.maps.MapView
+        android:id="@+id/embeddedMap"
+        android:layout_width="0dp"
+        android:layout_height="200dp"
+        app:layout_constraintTop_toBottomOf="@id/phoneInput"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="16dp" />
 
     <LinearLayout
         android:id="@+id/bottomButtons"
@@ -82,19 +93,19 @@
         android:padding="16dp">
 
         <Button
-            android:id="@+id/decline"
+            android:id="@+id/resetButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/terms_decline"
+            android:text="Reset"
             android:layout_marginEnd="8dp" />
 
         <Button
-            android:id="@+id/accept"
+            android:id="@+id/sendButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/terms_accept" />
+            android:text="Send" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout> 

@@ -114,7 +114,7 @@ public class FavoritesActivity extends AppCompatActivity {
                     for (DocumentSnapshot doc : tourSnapshots) {
                         Tour tour = doc.toObject(Tour.class);
                         if(tour != null) {
-                            tour.id = doc.getId(); // Gán ID document vào đối tượng tour
+                            tour.setId(doc.getId()); // Gán ID document vào đối tượng tour
                             favoriteToursList.add(tour);
                         }
                     }
@@ -125,7 +125,7 @@ public class FavoritesActivity extends AppCompatActivity {
     }
 
     private void removeFavorite(int position) {
-        String tourIdToRemove = favoriteToursList.get(position).id;
+        String tourIdToRemove = favoriteToursList.get(position).getId();
         String userId = "DUMMY_USER_ID_123";
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) userId = currentUser.getUid();
