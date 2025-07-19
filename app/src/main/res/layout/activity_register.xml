@@ -51,6 +51,14 @@
             android:layout_marginTop="12dp" />
 
         <EditText
+            android:id="@+id/phoneInput"
+            android:hint="Phone Number"
+            android:inputType="phone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp" />
+
+        <EditText
             android:id="@+id/confirmPasswordInput"
             android:hint="Confirm Password"
             android:inputType="textPassword"

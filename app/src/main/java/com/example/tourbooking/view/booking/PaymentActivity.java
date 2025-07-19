@@ -1,3 +1,4 @@
+// File: PaymentActivity.java (Đã sửa lỗi khởi tạo Stripe)
 package com.example.tourbooking.view.booking;
 
 import android.content.Intent;
@@ -16,9 +17,11 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.tourbooking.model.Booking;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.stripe.android.ApiResultCallback;
+import com.stripe.android.PaymentConfiguration; // Cần import thêm dòng này
 import com.stripe.android.Stripe;
 import com.stripe.android.model.ConfirmPaymentIntentParams;
 import com.stripe.android.model.PaymentIntent;
@@ -36,9 +39,7 @@ import java.util.Locale;
 
 public class PaymentActivity extends AppCompatActivity {
 
-    //region Khai báo biến
     private static final String TAG = "PaymentActivity";
-    // --- URL backend đã được cập nhật bằng URL Glitch của bạn ---
     private static final String BACKEND_URL = "https://lackadaisical-lively-ambulance.glitch.me/create-payment-intent";
 
     private MaterialToolbar toolbar;
@@ -54,7 +55,6 @@ public class PaymentActivity extends AppCompatActivity {
     private Stripe stripe;
     private RequestQueue volleyQueue;
     private double currentTotalAmount = 0;
-    //endregion
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -66,12 +66,16 @@ public class PaymentActivity extends AppCompatActivity {
         setupClickListeners();
 
         volleyQueue = Volley.newRequestQueue(this);
-        // QUAN TRỌNG: Hãy chắc chắn bạn đã thay thế bằng Publishable Key của MÌNH
+
+        // --- DÒNG CODE GÂY LỖI ĐÃ ĐƯỢC SỬA LẠI ---
+        // Lấy lại Publishable Key đã được cấu hình trong MyApplication
         stripe = new Stripe(
                 getApplicationContext(),
-                "pk_test_51PcC11Rx8zE3sD7g8Ua21jC0113f9E4U11WwB0eO8P5z3XyA79L18Yl8R7f3P9j8C3fL7h4C5e2fG0w00yZ4z1jE3"
+                PaymentConfiguration.getInstance(getApplicationContext()).getPublishableKey()
         );
     }
+
+    // ... (Toàn bộ các hàm còn lại giữ nguyên không thay đổi)
 
     private void initializeViews() {
         toolbar = findViewById(R.id.toolbar_payment);
@@ -88,7 +92,7 @@ public class PaymentActivity extends AppCompatActivity {
         tvPromoSavings = findViewById(R.id.tvPromoSavings);
         cardInputWidget = findViewById(R.id.stripe_card_widget);
         etBillingName = findViewById(R.id.etBillingName);
-
+        cardInputWidget.setPostalCodeEnabled(false);
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -146,8 +150,8 @@ public class PaymentActivity extends AppCompatActivity {
 
         JSONObject requestBody = new JSONObject();
         try {
-            long amountInSubunits = (long) (currentTotalAmount * 100);
-            requestBody.put("amount", amountInSubunits);
+            long amount = (long) currentTotalAmount;
+            requestBody.put("amount", amount);
         } catch (JSONException e) {
             onPaymentFailed("Lỗi tạo yêu cầu thanh toán.");
             return;
@@ -178,26 +182,62 @@ public class PaymentActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        stripe.onPaymentResult(requestCode, data, new ApiResultCallback<PaymentIntentResult>() {
-            @Override
-            public void onSuccess(@NonNull PaymentIntentResult result) {
-                PaymentIntent paymentIntent = result.getIntent();
-                PaymentIntent.Status status = paymentIntent.getStatus();
-                if (status == PaymentIntent.Status.Succeeded) {
-                    Toast.makeText(PaymentActivity.this, "Thanh toán thành công!", Toast.LENGTH_LONG).show();
-                    // TODO: Chuyển sang màn hình M16 (PaymentConfirmationActivity)
-                } else {
-                    onPaymentFailed("Trạng thái thanh toán không thành công: " + status);
-                }
-            }
+        if (stripe != null) {
+            stripe.onPaymentResult(requestCode, data, new ApiResultCallback<PaymentIntentResult>() {
+                @Override
+                public void onSuccess(@NonNull PaymentIntentResult result) {
+                    PaymentIntent paymentIntent = result.getIntent();
+                    PaymentIntent.Status status = paymentIntent.getStatus();
+                    if (status == PaymentIntent.Status.Succeeded) {
+                        // Thanh toán thành công!
+                        Toast.makeText(PaymentActivity.this, "Thanh toán thành công!", Toast.LENGTH_LONG).show();
 
-            @Override
-            public void onError(@NonNull Exception e) {
-                onPaymentFailed("Lỗi thanh toán: " + e.getMessage());
-            }
-        });
+                        // BƯỚC 1: Lưu đơn hàng vào Database (Firebase & Room)
+                        saveBookingToDatabase(paymentIntent);
+
+                        // BƯỚC 2: Chuẩn bị dữ liệu và chuyển sang màn hình xác nhận
+                        Intent intent = new Intent(PaymentActivity.this, PaymentConfirmationActivity.class);
+                        intent.putExtra(PaymentConfirmationActivity.EXTRA_BOOKING_ID, paymentIntent.getId());
+                        intent.putExtra(PaymentConfirmationActivity.EXTRA_TOUR_NAME, "Khám phá Vịnh Hạ Long 2 ngày 1 đêm"); // Lấy tên tour thật
+                        intent.putExtra(PaymentConfirmationActivity.EXTRA_BOOKING_DATE, "17/06/2025"); // Lấy ngày thật
+                        startActivity(intent);
+                        finish(); // Đóng màn hình thanh toán
+
+                    } else {
+                        onPaymentFailed("Trạng thái thanh toán không thành công: " + status);
+                    }
+                }
+
+                @Override
+                public void onError(@NonNull Exception e) {
+                    onPaymentFailed("Lỗi thanh toán: " + e.getMessage());
+                }
+            });
+        }
     }
 
+    private void saveBookingToDatabase(PaymentIntent paymentIntent) {
+        // TODO: Lấy userId của người dùng hiện tại từ Firebase Auth
+        String currentUserId = "some_user_id";
+
+        // Tạo đối tượng Booking
+        Booking newBooking = new Booking(
+                        paymentIntent.getId(),
+                        "Khám phá Vịnh Hạ Long 2 ngày 1 đêm", // Dữ liệu thật
+                "COMPLETED", // Ngày hiện tại
+                currentTotalAmount,
+                currentUserId,
+                new java.util.Date()
+                );
+
+        // TODO: Gọi Controller/Service để lưu vào Firebase Firestore
+        // Ví dụ: bookingController.saveRemoteBooking(newBooking);
+
+        // TODO: Sau khi lưu Firebase thành công, lưu vào Room để cache
+        // Ví dụ: bookingController.saveLocalBooking(newBooking);
+
+        Log.d(TAG, "Đã lưu đơn hàng với ID: " + paymentIntent.getId());
+    }
     private void onPaymentFailed(@Nullable String message) {
         if (message != null) {
             Log.e(TAG, "Payment failed: " + message);

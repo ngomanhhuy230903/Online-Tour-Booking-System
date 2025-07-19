@@ -2,7 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
     <application
+        android:name=".MyApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -12,7 +17,76 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TourBooking"
         tools:targetApi="31">
+        <activity
+            android:name=".view.tour.CompareResultActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.tour.TravelInsuranceActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.tour.CompareTourActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.tour.ItineraryBuilderActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.tour.TourDetailsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.tour.MapTourActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.tour.SearchResultsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.tour.SearchActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.home.HomeActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.booking.BookingCalendarActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.review.ReviewsListActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.review.ReviewFormActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.booking.FavoritesActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.booking.BookingDetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.booking.BookingHistoryActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.booking.PaymentConfirmationActivity"
+            android:exported="false" />
+        <activity
+            android:name=".MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity> <!-- <activity -->
+        <!-- android:name=".view.auth.LoginActivity" -->
+        <!-- android:exported="true"> -->
+        <!-- <intent-filter> -->
+        <!-- <action android:name="android.intent.action.MAIN" /> -->
+        <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+        <!-- </intent-filter> -->
+        <!-- </activity> -->
+        <!-- <activity -->
+        <!-- android:name=".MainActivity" -->
+        <!-- android:exported="false" /> -->
+        <activity
+            android:name=".view.booking.PaymentActivity"
+            android:exported="false" />
         <activity
             android:name=".view.auth.RegisterActivity"
             android:exported="false" />
@@ -23,28 +97,26 @@
             android:name=".view.auth.ForgotPasswordActivity"
             android:exported="false" />
         <activity
-            android:name=".view.auth.DashBoardActivity"
-            android:exported="false" />
-        <activity
-            android:name=".MainActivity"
+            android:name=".view.tour.DashBoardActivity"
             android:exported="false" />
         <activity
             android:name=".view.auth.LoginActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".view.profile.ProfileActivity"
             android:exported="false" />
-        <activity
-            android:name=".view.profile.EditProfileActivity"
-            android:exported="false" />
-        <activity
-            android:name=".view.profile.ChangePasswordActivity"
-            android:exported="false" />
+<!--        <activity-->
+<!--            android:name=".view.profile.ProfileActivity"-->
+<!--            android:exported="false" />-->
+<!--        <activity-->
+<!--            android:name=".view.profile.EditProfileActivity"-->
+<!--            android:exported="false" />-->
+<!--        <activity-->
+<!--            android:name=".view.info.TermsActivity"-->
+<!--            android:exported="false" />-->
+<!--        <activity-->
+<!--            android:name=".view.info.CompanyInfoActivity"-->
+<!--            android:exported="false" />-->
+<!--        <activity-->
+<!--            android:name=".view.profile.ChangePasswordActivity"-->
+<!--            android:exported="false" />-->
         <activity
             android:name=".view.auth.ChangePasswordActivity"
             android:exported="false" />
@@ -55,6 +127,25 @@
         <activity android:name=".ChatSupportActivity" android:exported="false" />
         <activity android:name=".FeedbackActivity" android:exported="false" />
 
+<!--        <activity-->
+<!--            android:name=".view.info.FAQActivity"-->
+<!--            android:exported="false" />-->
+        <activity
+            android:name=".view.info.ContactActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.info.LanguageSettingsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.info.LogoutConfirmationActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.info.NetworkErrorActivity"
+            android:exported="false" />
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyC5NZVY6wJAJ0IESmTw1U-wiP85FH_rydQ" />
     </application>
 
 </manifest>

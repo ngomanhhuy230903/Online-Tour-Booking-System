@@ -1,3 +1,73 @@
 <resources>
     <string name="app_name">TourBooking</string>
+    <string name="terms_title">Terms &amp; Conditions</string>
+    <string name="terms_search_hint">Search terms</string>
+    <string name="terms_last_updated">Last updated: 2023-01-01</string>
+    <string name="terms_print">Print</string>
+    <string name="terms_decline">Decline</string>
+    <string name="terms_accept">Accept</string>
+    <string name="terms_placeholder">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla eget.</string>
+    <string name="terms_found">"%1$s" found in document</string>
+    <string name="faq_title">FAQ</string>
+    <string name="faq_search_hint">Search FAQs</string>
+    <string name="faq_no_results">No FAQs found</string>
+    <string name="faq_contact_support">Contact Support</string>
+    <string-array name="filter_options">
+        <item>Popular</item>
+        <item>Price: Low to High</item>
+        <item>Price: High to Low</item>
+        <item>Top Rated</item>
+    </string-array>
+    <string name="prompt_tour_type">Select Tour Type</string>
+    <string name="prompt_duration">Select Duration</string>
+    <string-array name="sort_options">
+        <item>Sort by Price</item>
+        <item>Sort by Rating</item>
+        <item>Sort by Start Date</item>
+    </string-array>
+    <!-- Spinner Prompts -->
+    <string name="filter_by_provider">Filter by Provider</string>
+    <string name="sort_by_price">Sort by Price</string>
+    <string name="test_terms">Test Introduction &amp; Terms</string>
+    <string name="contact_us">Contact Us</string>
+    <string name="your_name">Your Name</string>
+    <string name="your_email">Your Email</string>
+    <string name="subject">Subject</string>
+    <string name="your_message">Your Message</string>
+    <string name="your_phone">Your Phone (Optional)</string>
+    <string name="reset">Reset</string>
+    <string name="send">Send</string>
+    <string name="please_fill_required">Please fill in all required fields</string>
+    <string name="invalid_email">Invalid email address</string>
+    <string name="message_sent">Your message has been sent!</string>
+    <string name="our_office">Our Office</string>
+    <string name="language_settings">Language Settings</string>
+    <string name="rtl_support">RTL Support</string>
+    <string name="restart_app_to_apply">Restart app to apply changes</string>
+    <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
+    <string name="selected">Selected: </string>
+    <string name="sample_text_en">Hello, how are you?</string>
+    <string name="sample_text_es">Hola, ¿cómo estás?</string>
+    <string name="sample_text_fr">Bonjour, comment ça va?</string>
+    <string name="sample_text_vi">Xin chào, bạn khỏe không?</string>
+    <string name="logout_confirmation">Are you sure you want to logout?</string>
+    <string name="remember_me">Remember Me</string>
+    <string name="contact_support">Contact Support</string>
+    <string name="no">No</string>
+    <string name="yes">Yes</string>
+    <string name="will_remember">Will remember you next time</string>
+    <string name="will_not_remember">Will not remember you</string>
+    <string name="contacting_support">Contacting support...</string>
+    <string name="last_active">Last active: %1$s</string>
+    <string name="session_info">User: %1$s | Session: %2$s</string>
+    <string name="no_internet">No internet connection. Please check your network and try again.</string>
+    <string name="retry">Retry</string>
+    <string name="offline_mode">Offline Mode</string>
+    <string name="last_sync">Last sync: %1$s</string>
+    <string name="app_version">App Version: %1$s</string>
+    <string name="offline_mode_enabled">Offline mode enabled</string>
+    <string name="offline_mode_disabled">Offline mode disabled</string>
+    <string name="connection_restored">Connection restored!</string>
+    <string name="still_no_connection">Still no connection.</string>
 </resources>
