@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.tourbooking.MainActivity;
 import com.example.tourbooking.R;
+import com.example.tourbooking.view.home.HomeActivity;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
@@ -94,11 +95,10 @@ public class PaymentConfirmationActivity extends AppCompatActivity {
             // TODO: Mở BookingHistoryActivity (M17)
              Intent intent = new Intent(this, BookingHistoryActivity.class);
              startActivity(intent);
-//            Toast.makeText(this, "Chức năng đang phát triển", Toast.LENGTH_SHORT).show();
         });
 
         btnGoHome.setOnClickListener(v -> {
-            Intent intent = new Intent(this, MainActivity.class);
+            Intent intent = new Intent(this, HomeActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
             finish();

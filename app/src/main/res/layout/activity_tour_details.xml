@@ -132,11 +132,16 @@
 
         <!-- Rating -->
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:id="@+id/layoutReviews"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:orientation="horizontal"
-            android:gravity="center_vertical">
+            android:gravity="center_vertical"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="8dp">
 
             <TextView
                 android:text="Reviews:"
@@ -145,7 +150,7 @@
 
             <TextView
                 android:id="@+id/ratingNumber"
-                android:text="4.5"
+                android:text="0.0"
                 android:textStyle="bold"
                 android:layout_marginStart="8dp"
                 android:layout_width="wrap_content"
@@ -156,12 +161,20 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:numStars="5"
-                android:rating="4.5"
+                android:rating="0"
                 android:isIndicator="true"
                 android:scaleX="0.7"
                 android:scaleY="0.7"
                 android:layout_marginStart="6dp"
                 style="?android:attr/ratingBarStyleSmall" />
+
+            <TextView
+                android:id="@+id/tvTotalReviewsClickable"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                tools:text="(125 reviews)" />
+
         </LinearLayout>
 
         <Button
