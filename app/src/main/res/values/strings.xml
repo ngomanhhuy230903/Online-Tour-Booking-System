@@ -13,6 +13,7 @@
     <string name="faq_no_results">No FAQs found</string>
     <string name="faq_contact_support">Contact Support</string>
     <string-array name="filter_options">
+        <item>All Tours</item>
         <item>Popular</item>
         <item>Price: Low to High</item>
         <item>Price: High to Low</item>

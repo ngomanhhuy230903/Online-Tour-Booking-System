@@ -56,11 +56,12 @@ public class BookingCalendarActivity extends AppCompatActivity {
 
     private void initializeViews() {
         calendarView = findViewById(R.id.calendarView);
+        calendarView.setMinDate(System.currentTimeMillis() - 1000);
         tvSelectedDate = findViewById(R.id.tvSelectedDate);
         etGuestCount = findViewById(R.id.etGuestCount);
         tvTotal = findViewById(R.id.tvTotal);
         btnProceed = findViewById(R.id.btnProceed);
-        spinnerRoomType = findViewById(R.id.spinnerRoomType); // Ánh xạ lại
+        spinnerRoomType = findViewById(R.id.spinnerRoomType);
         etSpecialRequests = findViewById(R.id.etSpecialRequests);
     }
 

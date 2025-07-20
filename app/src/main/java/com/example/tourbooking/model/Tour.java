@@ -24,6 +24,9 @@ public class Tour implements Serializable {
 
     private String type;
     private String duration;
+    private long viewCount;
+    private String startTime;
+    private String endTime;
 
     // Constructor rỗng cho Firestore
     public Tour() {}
@@ -101,6 +104,14 @@ public class Tour implements Serializable {
         this.description = description;
     }
 
+    public long getViewCount() {
+        return viewCount;
+    }
+
+    public void setViewCount(long viewCount) {
+        this.viewCount = viewCount;
+    }
+
     public List<ItineraryItem> getItinerary() {
         return itinerary;
     }
@@ -162,4 +173,19 @@ public class Tour implements Serializable {
 
     public String getDuration() { return duration; }
     public void setDuration(String duration) { this.duration = duration; }
+    public String getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(String startTime) {
+        this.startTime = startTime;
+    }
+
+    public String getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(String endTime) {
+        this.endTime = endTime;
+    }
 }
