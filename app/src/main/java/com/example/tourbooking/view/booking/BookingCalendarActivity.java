@@ -1,8 +1,10 @@
-// File: view/booking/BookingCalendarActivity.java (Đã cập nhật để kết nối)
 package com.example.tourbooking.view.booking;
 
-import android.content.Intent; // Import mới
+import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -15,8 +17,8 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.tourbooking.R;
+import com.example.tourbooking.model.Tour;
 
-import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -26,52 +28,76 @@ import java.util.Calendar;
 public class BookingCalendarActivity extends AppCompatActivity {
     private CalendarView calendarView;
     private TextView tvSelectedDate, tvTotal;
-    private EditText etGuestCount, etSpecialRequests; // Đổi tên để rõ ràng hơn
-    private Spinner spinnerRoomType;
+    private EditText etGuestCount, etSpecialRequests;
+    private Spinner spinnerRoomType; // Khai báo lại
     private Button btnProceed;
 
-    // Giả sử tour này có giá 1,000,000 VNĐ / khách
-    private final double basePrice = 1000000.0;
+    private Tour currentTour;
     private final NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
-
-    private long selectedDateTime = -1; // Chỉ cho chọn 1 ngày
+    private long selectedDateTime = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_booking_calendar);
 
+        currentTour = (Tour) getIntent().getSerializableExtra("tour");
+        if (currentTour == null) {
+            Toast.makeText(this, "Lỗi: Không có thông tin tour.", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
+
+        initializeViews();
+        setupRoomTypeSpinner(); // Gọi hàm cài đặt Spinner
+        setupListeners();
+        calculateTotal();
+    }
+
+    private void initializeViews() {
         calendarView = findViewById(R.id.calendarView);
         tvSelectedDate = findViewById(R.id.tvSelectedDate);
-        etGuestCount = findViewById(R.id.etGuestCount); // Dùng ID mới
-        spinnerRoomType = findViewById(R.id.spinnerRoomType);
-        etSpecialRequests = findViewById(R.id.etSpecialRequests);
+        etGuestCount = findViewById(R.id.etGuestCount);
         tvTotal = findViewById(R.id.tvTotal);
         btnProceed = findViewById(R.id.btnProceed);
+        spinnerRoomType = findViewById(R.id.spinnerRoomType); // Ánh xạ lại
+        etSpecialRequests = findViewById(R.id.etSpecialRequests);
+    }
 
-        // Room type adapter
+    // Hàm mới để cài đặt Spinner
+    private void setupRoomTypeSpinner() {
         String[] rooms = {"Phòng Tiêu chuẩn", "Phòng Deluxe", "Phòng Suite"};
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, rooms);
         spinnerRoomType.setAdapter(adapter);
+    }
 
-        // Chỉ cho phép chọn 1 ngày khởi hành
+    private void setupListeners() {
         calendarView.setOnDateChangeListener((view, year, month, dayOfMonth) -> {
             Calendar selected = Calendar.getInstance();
             selected.set(year, month, dayOfMonth);
             selectedDateTime = selected.getTimeInMillis();
-
             tvSelectedDate.setText("Ngày khởi hành đã chọn: " + formatDate(selectedDateTime));
             calculateTotal();
         });
 
-        // Thêm listener cho Spinner và EditText để tự động cập nhật giá
+        etGuestCount.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                calculateTotal();
+            }
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
+
+        // Thêm listener cho Spinner để tự động cập nhật giá
         spinnerRoomType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            public void onItemSelected(AdapterView<?> parent, android.view.View view, int pos, long id) {
+            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
                 calculateTotal();
             }
             public void onNothingSelected(AdapterView<?> parent) { }
         });
-        // Bạn có thể thêm TextWatcher cho etGuestCount để cập nhật giá khi người dùng gõ
 
         btnProceed.setOnClickListener(v -> {
             if (selectedDateTime == -1) {
@@ -83,24 +109,20 @@ public class BookingCalendarActivity extends AppCompatActivity {
                 return;
             }
 
-            // === PHẦN KẾT NỐI MÀN HÌNH ===
-            // 1. Thu thập dữ liệu
-            String guestCount = etGuestCount.getText().toString() + " khách";
-            String selectedDate = formatDate(selectedDateTime);
+            // Thu thập dữ liệu
+            String guestInfo = etGuestCount.getText().toString() + " khách - " + spinnerRoomType.getSelectedItem().toString();
+            String selectedDateStr = formatDate(selectedDateTime);
             double totalAmount = calculateTotal();
 
-            // 2. Tạo Intent và đính kèm dữ liệu
+            // Tạo Intent và gửi dữ liệu thật sang PaymentActivity
             Intent intent = new Intent(BookingCalendarActivity.this, PaymentActivity.class);
-            intent.putExtra("TOUR_NAME", "Tour khám phá Vịnh Hạ Long 2 ngày 1 đêm"); // Tên tour (tạm thời)
-            intent.putExtra("GUEST_COUNT", guestCount);
-            intent.putExtra("SELECTED_DATE", selectedDate);
+            intent.putExtra("TOUR_ID", currentTour.getId());
+            intent.putExtra("TOUR_NAME", currentTour.getTourName());
+            intent.putExtra("GUEST_COUNT", guestInfo); // Gửi cả thông tin phòng
+            intent.putExtra("SELECTED_DATE", selectedDateStr);
             intent.putExtra("TOTAL_AMOUNT", totalAmount);
-
-            // 3. Mở màn hình PaymentActivity
             startActivity(intent);
         });
-
-        calculateTotal();
     }
 
     private double calculateTotal() {
@@ -113,7 +135,7 @@ public class BookingCalendarActivity extends AppCompatActivity {
             if (room.equals("Phòng Deluxe")) multiplier = 1.3;
             else if (room.equals("Phòng Suite")) multiplier = 1.6;
 
-            total = guests * basePrice * multiplier;
+            total = guests * currentTour.getPrice() * multiplier; // Dùng giá thật của tour và nhân với hệ số phòng
             tvTotal.setText("Tổng chi phí ước tính: " + currencyFormatter.format(total));
         } catch (Exception e) {
             tvTotal.setText("Tổng chi phí ước tính: 0 VNĐ");
