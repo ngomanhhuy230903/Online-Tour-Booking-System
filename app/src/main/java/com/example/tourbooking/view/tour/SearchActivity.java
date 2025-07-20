@@ -19,20 +19,33 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.tourbooking.R;
+import com.example.tourbooking.model.ItineraryItem;
+import com.example.tourbooking.model.Tour;
 import com.example.tourbooking.view.home.HomeActivity;
 import com.google.android.material.slider.RangeSlider;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Random;
 
 public class SearchActivity extends AppCompatActivity {
     EditText etKeyword, etLocation;
     Button btnDepartureDate, btnReturnDate, btnSearch, btnClearFilters;
     Spinner spinnerTourType, spinnerDuration;
     RangeSlider priceSlider;
-    Calendar departureCalendar = Calendar.getInstance();
-    Calendar returnCalendar = Calendar.getInstance();
+    Calendar departureCalendar = null;
+    Calendar returnCalendar = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,8 +75,8 @@ public class SearchActivity extends AppCompatActivity {
         spinnerDuration.setAdapter(durationAdapter);
 
         // Date Pickers
-        btnDepartureDate.setOnClickListener(v -> showDatePicker(departureCalendar, btnDepartureDate));
-        btnReturnDate.setOnClickListener(v -> showDatePicker(returnCalendar, btnReturnDate));
+        btnDepartureDate.setOnClickListener(v -> showDatePicker("departure"));
+        btnReturnDate.setOnClickListener(v -> showDatePicker("return"));
 
         // Search button
         btnSearch.setOnClickListener(v -> {
@@ -71,6 +84,15 @@ public class SearchActivity extends AppCompatActivity {
             String location = etLocation.getText().toString().trim();
             String type = spinnerTourType.getSelectedItem().toString();
             String duration = spinnerDuration.getSelectedItem().toString();
+            Long departureDate = departureCalendar != null ? departureCalendar.getTimeInMillis() : null;
+            Long returnDate = returnCalendar != null ? returnCalendar.getTimeInMillis() : null;
+
+            if (type == "Tour Type") {
+                type = null;
+            }
+            if (duration == "Duration") {
+                duration = null;
+            }
 
             List<Float> priceValues = priceSlider.getValues();
             float minPrice = priceValues.get(0);
@@ -84,6 +106,8 @@ public class SearchActivity extends AppCompatActivity {
             intent.putExtra("duration", duration);
             intent.putExtra("minPrice", minPrice);
             intent.putExtra("maxPrice", maxPrice);
+            intent.putExtra("departureDate", departureDate);
+            intent.putExtra("returnDate", returnDate);
             startActivity(intent);
         });
 
@@ -96,17 +120,79 @@ public class SearchActivity extends AppCompatActivity {
             btnDepartureDate.setText("Departure Date");
             btnReturnDate.setText("Return Date");
         });
+
+//        fixItineraryTimeAndTourTime();
     }
 
-    private void showDatePicker(Calendar calendar, Button targetBtn) {
+    private void showDatePicker(String type) {
+        Calendar tempCalendar;
+
+        // Dùng current day nếu calendar đang null
+        if (type.equals("departure")) {
+            tempCalendar = departureCalendar != null ? departureCalendar : Calendar.getInstance();
+        } else {
+            tempCalendar = returnCalendar != null ? returnCalendar : Calendar.getInstance();
+        }
+
         DatePickerDialog dialog = new DatePickerDialog(this,
                 (view, year, month, day) -> {
-                    calendar.set(year, month, day);
-                    targetBtn.setText((month + 1) + "/" + day + "/" + year);
+                    Calendar selected = Calendar.getInstance();
+                    selected.set(year, month, day);
+
+                    if (type.equals("departure")) {
+                        departureCalendar = selected;
+                        btnDepartureDate.setText((month + 1) + "/" + day + "/" + year);
+                    } else {
+                        returnCalendar = selected;
+                        btnReturnDate.setText((month + 1) + "/" + day + "/" + year);
+                    }
                 },
-                calendar.get(Calendar.YEAR),
-                calendar.get(Calendar.MONTH),
-                calendar.get(Calendar.DAY_OF_MONTH));
+                tempCalendar.get(Calendar.YEAR),
+                tempCalendar.get(Calendar.MONTH),
+                tempCalendar.get(Calendar.DAY_OF_MONTH)
+        );
+
         dialog.show();
+    }
+
+    private void fixItineraryTimeAndTourTime() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        List<String> tourNames = Arrays.asList(
+                "Chinh Phục Fansipan", "Khám Phá Hà Giang", "Về Miền Tây Sông Nước",
+                "Đà Lạt Sương Mù", "Hạ Long Kỳ Quan", "Đảo Phú Quốc", "Vịnh Cam Ranh",
+                "Tây Nguyên Huyền Bí", "Sapa Mùa Hoa", "Tràng An Hùng Vĩ",
+                "Cố Đô Huế", "Hội An Cổ Kính", "Đà Nẵng Hiện Đại", "Biển Nha Trang",
+                "Đảo Cô Tô", "Thác Bản Giốc", "Chùa Bái Đính", "Côn Đảo Kỳ Bí",
+                "Hang Sơn Đoòng", "Rừng U Minh"
+        );
+
+        Random random = new Random();
+
+        db.collection("tours").get()
+                .addOnSuccessListener(querySnapshot -> {
+                    for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
+                        String tourId = doc.getId();
+                        List<Map<String, Object>> itinerary = (List<Map<String, Object>>) doc.get("itinerary");
+
+                        if (itinerary == null || itinerary.isEmpty()) continue;
+
+                        for (int i = 0; i < itinerary.size(); i++) {
+                            String randomLocation = tourNames.get(random.nextInt(tourNames.size()));
+                            Map<String, Object> item = itinerary.get(i);
+                            item.put("location", randomLocation);
+                        }
+
+                        // Tạo map cập nhật
+                        Map<String, Object> updateData = new HashMap<>();
+                        updateData.put("itinerary", itinerary);
+
+                        db.collection("tours").document(tourId)
+                                .update(updateData)
+                                .addOnSuccessListener(aVoid -> Log.d("UPDATE", "Tour updated: " + tourId))
+                                .addOnFailureListener(e -> Log.e("UPDATE", "Failed to update tour: " + tourId, e));
+                    }
+                })
+                .addOnFailureListener(e -> Log.e("FIRESTORE", "Failed to fetch tours", e));
     }
 }

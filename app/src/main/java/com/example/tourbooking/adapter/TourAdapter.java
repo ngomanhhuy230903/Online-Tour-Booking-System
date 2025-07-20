@@ -15,6 +15,8 @@ import com.example.tourbooking.R;
 import com.example.tourbooking.model.Tour;
 import com.example.tourbooking.view.tour.TourDetailsActivity;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -46,7 +48,7 @@ public class TourAdapter extends RecyclerView.Adapter<TourAdapter.TourViewHolder
         Tour tour = tourList.get(position);
 
         holder.tvTourName.setText(tour.getTourName());
-        holder.tvPrice.setText("$" + tour.getPrice());
+        holder.tvPrice.setText("$ " + formatNumber(tour.getPrice()));
         holder.tvDays.setText(tour.getDays() + " days");
 
         if (tour.getRating() != null) {
@@ -73,6 +75,7 @@ public class TourAdapter extends RecyclerView.Adapter<TourAdapter.TourViewHolder
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, TourDetailsActivity.class);
             intent.putExtra("tour", tour);
+            intent.putExtra("tour_id", tour.getId());
             context.startActivity(intent);
         });
     }
@@ -80,6 +83,16 @@ public class TourAdapter extends RecyclerView.Adapter<TourAdapter.TourViewHolder
     @Override
     public int getItemCount() {
         return tourList != null ? tourList.size() : 0;
+    }
+
+    public static String formatNumber(double number){
+        DecimalFormatSymbols symbols = new DecimalFormatSymbols();
+        symbols.setGroupingSeparator('.');
+        symbols.setDecimalSeparator(',');
+
+        DecimalFormat df = new DecimalFormat("#,###", symbols);
+        String formattedPrice = df.format(number); // Kết quả: "3.500.000"
+        return  formattedPrice;
     }
 
     public static class TourViewHolder extends RecyclerView.ViewHolder {

@@ -1,5 +1,7 @@
 package com.example.tourbooking.view.tour;
 
+import static com.example.tourbooking.adapter.TourAdapter.formatNumber;
+
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -108,16 +110,18 @@ public class TourDetailsActivity extends AppCompatActivity {
         if (tour.getItinerary() != null && !tour.getItinerary().isEmpty()) {
             StringBuilder itineraryBuilder = new StringBuilder();
             for (ItineraryItem item : tour.getItinerary()) {
-                itineraryBuilder.append("• ").append(item.getName()).append("\n");
+                if (item.getLocation() != null && !item.getLocation().isEmpty()) {
+                    itineraryBuilder.append("• ").append(item.getLocation()).append("\n");
+                }
             }
             tvItinerary.setText(itineraryBuilder.toString().trim());
         } else {
             tvItinerary.setText("No itinerary available.");
         }
 
-        String priceText = "Base Price: $" + (tour.getBasePrice() != null ? tour.getBasePrice() : "N/A")
-                + "   Taxes: $" + (tour.getTaxes() != null ? tour.getTaxes() : "N/A")
-                + "   Fees: $" + (tour.getFees() != null ? tour.getFees() : "N/A");
+        String priceText = "• Base Price: $ " + (tour.getBasePrice() != null ? formatNumber(tour.getBasePrice()) : "N/A") + "\n"
+                + "• Taxes: $ " + (tour.getTaxes() != null ? formatNumber(tour.getTaxes()) : "N/A") + "\n"
+                + "• Fees: $ " + (tour.getFees() != null ? formatNumber(tour.getFees()) : "N/A");
         tvPrices.setText(priceText);
 
         if (tour.getIncludedServices() != null && !tour.getIncludedServices().isEmpty()) {

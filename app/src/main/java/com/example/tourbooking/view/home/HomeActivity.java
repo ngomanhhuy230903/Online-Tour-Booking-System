@@ -1,5 +1,7 @@
 package com.example.tourbooking.view.home;
 
+import static com.example.tourbooking.adapter.TourAdapter.formatNumber;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -25,6 +27,7 @@ import com.example.tourbooking.view.tour.SearchActivity;
 import com.example.tourbooking.view.tour.SearchResultsActivity;
 import com.example.tourbooking.view.tour.TourDetailsActivity;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.text.NumberFormat;
@@ -38,7 +41,7 @@ public class HomeActivity extends AppCompatActivity {
     private ViewPager2 bannerSlider;
     private Handler sliderHandler = new Handler();
     private Runnable sliderRunnable;
-    private LinearLayout tourContainer;
+    private LinearLayout tourContainer, tourRecommendedContainer;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     @Override
@@ -54,6 +57,7 @@ public class HomeActivity extends AppCompatActivity {
         initializeViews();
         setupBannerSlider();
         loadFeaturedTours();
+        loadRecommendedTours();
         setupCategoryListeners();
     }
 
@@ -61,6 +65,7 @@ public class HomeActivity extends AppCompatActivity {
         etSearch = findViewById(R.id.etSearch);
         bannerSlider = findViewById(R.id.bannerSlider);
         tourContainer = findViewById(R.id.tourContainer);
+        tourRecommendedContainer = findViewById(R.id.tourRecommendedContainer);
 
         etSearch.setFocusable(false);
         etSearch.setClickable(true);
@@ -110,6 +115,7 @@ public class HomeActivity extends AppCompatActivity {
 
     private void loadFeaturedTours() {
         db.collection("tours")
+                .orderBy("viewCount", Query.Direction.DESCENDING)
                 .limit(10)
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
@@ -128,8 +134,7 @@ public class HomeActivity extends AppCompatActivity {
                         TextView txtTourPrice = tourView.findViewById(R.id.txtTourPrice);
 
                         txtTourName.setText(tour.getTourName());
-                        NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
-                        txtTourPrice.setText(currencyFormatter.format(tour.getPrice()));
+                        txtTourPrice.setText("$ " + formatNumber(tour.getPrice()));
 
                         Glide.with(this).load(tour.getThumbnailUrl()).into(imgTour);
 
@@ -142,6 +147,44 @@ public class HomeActivity extends AppCompatActivity {
                         });
 
                         tourContainer.addView(tourView);
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Failed to load tours", Toast.LENGTH_SHORT).show();
+                });
+    }
+
+    private void loadRecommendedTours() {
+        db.collection("tours")
+                .orderBy("rating", Query.Direction.DESCENDING)
+                .limit(10)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    tourRecommendedContainer.removeAllViews();
+                    LayoutInflater inflater = LayoutInflater.from(this);
+
+                    for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                        Tour tour = doc.toObject(Tour.class);
+                        tour.setId(doc.getId());
+
+                        View tourView = inflater.inflate(R.layout.item_tour, tourRecommendedContainer, false);
+                        ImageView imgTour = tourView.findViewById(R.id.imgTour);
+                        TextView txtTourName = tourView.findViewById(R.id.txtTourName);
+                        TextView txtTourPrice = tourView.findViewById(R.id.txtTourPrice);
+
+                        txtTourName.setText(tour.getTourName());
+                        txtTourPrice.setText("$ " + formatNumber(tour.getPrice()));
+
+                        Glide.with(this).load(tour.getThumbnailUrl()).into(imgTour);
+
+                        tourView.setOnClickListener(v -> {
+                            Intent intent = new Intent(this, TourDetailsActivity.class);
+                            intent.putExtra("tour", tour);
+                            intent.putExtra("tour_id", tour.getId());
+                            startActivity(intent);
+                        });
+
+                        tourRecommendedContainer.addView(tourView);
                     }
                 })
                 .addOnFailureListener(e -> {
