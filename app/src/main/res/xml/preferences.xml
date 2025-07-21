@@ -50,4 +50,32 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory app:title="Thông tin">
+
+        <Preference
+            app:key="company_info"
+            app:title="Giới thiệu công ty"
+            app:summary="Thông tin về công ty"/>
+
+        <Preference
+            app:key="contact"
+            app:title="Liên hệ"
+            app:summary="Thông tin liên hệ hỗ trợ"/>
+
+        <Preference
+            app:key="faq"
+            app:title="Câu hỏi thường gặp (FAQ)"
+            app:summary="Các câu hỏi thường gặp và giải đáp"/>
+
+        <Preference
+            app:key="language_settings"
+            app:title="Cài đặt ngôn ngữ"
+            app:summary="Thay đổi ngôn ngữ ứng dụng"/>
+
+        <Preference
+            app:key="terms"
+            app:title="Điều khoản sử dụng"
+            app:summary="Xem điều khoản và chính sách"/>
+
+    </PreferenceCategory>
 </PreferenceScreen>
