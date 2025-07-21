@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory app:title="Chung">
+
+        <ListPreference
+            app:key="language"
+            app:title="Ngôn ngữ"
+            app:summary="Chọn ngôn ngữ hiển thị"
+            app:entries="@array/language_entries"
+            app:entryValues="@array/language_values"
+            app:defaultValue="vi" />
+
+        <SwitchPreferenceCompat
+            app:key="theme"
+            app:title="Chế độ tối (Dark Mode)"
+            app:summary="Bật/tắt giao diện tối" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="Thông báo">
+
+        <SwitchPreferenceCompat
+            app:key="notifications_push"
+            app:title="Thông báo đẩy"
+            app:summary="Nhận các cập nhật và khuyến mãi"
+            app:defaultValue="true"/>
+
+        <SwitchPreferenceCompat
+            app:key="notifications_email"
+            app:title="Thông báo qua Email"
+            app:summary="Nhận bản tin và xác nhận đơn hàng"
+            app:defaultValue="true"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="Bảo mật &amp; Riêng tư">
+
+        <SwitchPreferenceCompat
+            app:key="privacy_public_profile"
+            app:title="Hồ sơ công khai"
+            app:summary="Cho phép người khác xem hồ sơ của bạn"
+            app:defaultValue="false"/>
+
+        <SwitchPreferenceCompat
+            app:key="security_mfa"
+            app:title="Xác thực đa yếu tố (MFA)"
+            app:summary="Tăng cường bảo mật cho tài khoản"
+            app:defaultValue="false"/>
+
+    </PreferenceCategory>
+
+</PreferenceScreen>
