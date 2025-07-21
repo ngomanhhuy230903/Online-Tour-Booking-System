@@ -1,31 +1,28 @@
 package com.example.tourbooking.view.booking;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.tourbooking.R;
 import com.example.tourbooking.adapter.FavoriteAdapter;
 import com.example.tourbooking.model.Tour;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+import com.example.tourbooking.utils.SessionManager;
+import com.example.tourbooking.view.home.HomeActivity;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class FavoritesActivity extends AppCompatActivity {
 
@@ -35,7 +32,7 @@ public class FavoritesActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     private LinearLayout emptyStateLayout;
     private FirebaseFirestore db;
-    private FirebaseAuth mAuth;
+    private SessionManager sessionManager;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -44,11 +41,13 @@ public class FavoritesActivity extends AppCompatActivity {
 
         Toolbar toolbar = findViewById(R.id.toolbar_favorites);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
         toolbar.setNavigationOnClickListener(v -> onBackPressed());
 
         db = FirebaseFirestore.getInstance();
-        mAuth = FirebaseAuth.getInstance();
+        sessionManager = new SessionManager(this);
 
         initializeViews();
         setupRecyclerView();
@@ -59,13 +58,16 @@ public class FavoritesActivity extends AppCompatActivity {
         rvFavoriteTours = findViewById(R.id.rvFavoriteTours);
         progressBar = findViewById(R.id.progressBarFavorites);
         emptyStateLayout = findViewById(R.id.layoutEmptyState);
-        findViewById(R.id.btnGoToHome).setOnClickListener(v -> finish()); // Đóng màn hình này
+        findViewById(R.id.btnGoToHome).setOnClickListener(v -> {
+            startActivity(new Intent(this, HomeActivity.class));
+            finish();
+        });
     }
 
     private void setupRecyclerView() {
         favoriteToursList = new ArrayList<>();
-        adapter = new FavoriteAdapter(favoriteToursList, this, position -> {
-            removeFavorite(position);
+        adapter = new FavoriteAdapter(favoriteToursList, this, tour -> {
+            removeFavorite(tour);
         });
         rvFavoriteTours.setLayoutManager(new LinearLayoutManager(this));
         rvFavoriteTours.setAdapter(adapter);
@@ -76,30 +78,33 @@ public class FavoritesActivity extends AppCompatActivity {
         rvFavoriteTours.setVisibility(View.GONE);
         emptyStateLayout.setVisibility(View.GONE);
 
-        String userId = "DUMMY_USER_ID_123"; // Dùng ID test
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (currentUser != null) {
-            userId = currentUser.getUid();
+        String userId = sessionManager.getUserId();
+        if (userId == null) {
+            Toast.makeText(this, "Vui lòng đăng nhập để xem mục Yêu thích.", Toast.LENGTH_SHORT).show();
+            showEmptyState();
+            return;
         }
 
-        // Stage 1: Get favorite tour IDs
-        String finalUserId = userId;
         db.collection("favorites")
-                .whereEqualTo("userId", finalUserId)
+                .whereEqualTo("userId", userId)
+                .orderBy("timestamp", Query.Direction.DESCENDING)
                 .get()
                 .addOnSuccessListener(favoriteSnapshots -> {
                     if (favoriteSnapshots.isEmpty()) {
                         showEmptyState();
                         return;
                     }
-
                     List<String> tourIds = new ArrayList<>();
                     for (QueryDocumentSnapshot doc : favoriteSnapshots) {
-                        tourIds.add(doc.getString("tourId"));
+                        if (doc.getString("tourId") != null) {
+                            tourIds.add(doc.getString("tourId"));
+                        }
                     }
-
-                    // Stage 2: Get tour details for those IDs
-                    fetchToursByIds(tourIds);
+                    if (tourIds.isEmpty()) {
+                        showEmptyState();
+                    } else {
+                        fetchToursByIds(tourIds);
+                    }
                 })
                 .addOnFailureListener(e -> showErrorState());
     }
@@ -113,35 +118,37 @@ public class FavoritesActivity extends AppCompatActivity {
                     favoriteToursList.clear();
                     for (DocumentSnapshot doc : tourSnapshots) {
                         Tour tour = doc.toObject(Tour.class);
-                        if(tour != null) {
-                            tour.setId(doc.getId()); // Gán ID document vào đối tượng tour
+                        if (tour != null) {
+                            tour.setId(doc.getId());
                             favoriteToursList.add(tour);
                         }
                     }
                     adapter.notifyDataSetChanged();
-                    rvFavoriteTours.setVisibility(View.VISIBLE);
+                    if (favoriteToursList.isEmpty()) {
+                        showEmptyState();
+                    } else {
+                        rvFavoriteTours.setVisibility(View.VISIBLE);
+                    }
                 })
                 .addOnFailureListener(e -> showErrorState());
     }
 
-    private void removeFavorite(int position) {
-        String tourIdToRemove = favoriteToursList.get(position).getId();
-        String userId = "DUMMY_USER_ID_123";
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (currentUser != null) userId = currentUser.getUid();
+    private void removeFavorite(Tour tourToRemove) {
+        String userId = sessionManager.getUserId();
+        if (userId == null) return;
 
         db.collection("favorites")
                 .whereEqualTo("userId", userId)
-                .whereEqualTo("tourId", tourIdToRemove)
+                .whereEqualTo("tourId", tourToRemove.getId())
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
-                    for (DocumentSnapshot doc : queryDocumentSnapshots) {
-                        doc.getReference().delete(); // Xóa document trong collection 'favorites'
+                    if (!queryDocumentSnapshots.isEmpty()) {
+                        for (DocumentSnapshot doc : queryDocumentSnapshots) {
+                            doc.getReference().delete();
+                        }
+                        loadFavoriteTours();
+                        Toast.makeText(this, "Đã xóa khỏi Yêu thích", Toast.LENGTH_SHORT).show();
                     }
-                    favoriteToursList.remove(position);
-                    adapter.notifyItemRemoved(position);
-                    if(favoriteToursList.isEmpty()) showEmptyState();
-                    Toast.makeText(this, "Đã xóa khỏi Yêu thích", Toast.LENGTH_SHORT).show();
                 });
     }
 

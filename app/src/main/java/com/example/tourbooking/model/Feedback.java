@@ -7,12 +7,11 @@ public class Feedback {
     public String userId;
     public float rating;
     public String feedbackText;
-    public String screenshotUrl; // Sẽ dùng sau này
+    public String screenshotUrl;
     @ServerTimestamp
     public Date timestamp;
 
     public Feedback() {
-        // Constructor rỗng cho Firestore
     }
 
 }

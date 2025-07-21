@@ -1,12 +1,11 @@
 package com.example.tourbooking.view.tour;
 
-import static com.example.tourbooking.adapter.TourAdapter.formatNumber;
-
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
@@ -20,15 +19,20 @@ import com.example.tourbooking.R;
 import com.example.tourbooking.model.ItineraryItem;
 import com.example.tourbooking.model.Review;
 import com.example.tourbooking.model.Tour;
+import com.example.tourbooking.utils.SessionManager;
 import com.example.tourbooking.view.booking.BookingCalendarActivity;
+import com.example.tourbooking.view.booking.FavoritesActivity;
 import com.example.tourbooking.view.review.ReviewsListActivity;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.gson.Gson;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class TourDetailsActivity extends AppCompatActivity {
     private ImageView ivMainImage;
@@ -36,9 +40,12 @@ public class TourDetailsActivity extends AppCompatActivity {
     private TextView tvIncluded, tvExcluded;
     private RatingBar ratingBar;
     private Button btnBookNow, btnViewMap;
+    private ImageButton btnFavorite;
     private LinearLayout galleryContainer, layoutReviews;
     private FirebaseFirestore db;
-    private Tour currentTour;
+    private SessionManager sessionManager;
+    private boolean isFavorited = false;
+    private String favoriteDocumentId = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,19 +54,20 @@ public class TourDetailsActivity extends AppCompatActivity {
 
         initializeViews();
         db = FirebaseFirestore.getInstance();
+        sessionManager = new SessionManager(this);
 
-        Serializable serializableExtra = getIntent().getSerializableExtra("tour");
-        if (serializableExtra instanceof Tour) {
-            currentTour = (Tour) serializableExtra;
-        }
-
+        Tour tour = (Tour) getIntent().getSerializableExtra("tour");
         String tourId = getIntent().getStringExtra("tour_id");
 
-        if (currentTour != null && tourId != null) {
-            currentTour.setId(tourId);
-            loadTourData(currentTour);
-            fetchAndDisplayReviewsSummary(tourId);
-            setupClickListeners(currentTour);
+        if (tour != null) {
+            tour.setId(tourId); // Gán ID vào đối tượng tour
+            loadTourData(tour);
+
+            if (tourId != null) {
+                fetchAndDisplayReviewsSummary(tourId);
+                checkIfFavorite(tourId);
+                setupClickListeners(tour);
+            }
         } else {
             Toast.makeText(this, "Lỗi: Dữ liệu tour không hợp lệ.", Toast.LENGTH_SHORT).show();
             finish();
@@ -82,6 +90,7 @@ public class TourDetailsActivity extends AppCompatActivity {
         btnViewMap = findViewById(R.id.btnViewMap);
         layoutReviews = findViewById(R.id.layoutReviews);
         tvTotalReviewsClickable = findViewById(R.id.tvTotalReviewsClickable);
+        btnFavorite = findViewById(R.id.btnFavorite);
     }
 
     private void loadTourData(Tour tour) {
@@ -110,18 +119,16 @@ public class TourDetailsActivity extends AppCompatActivity {
         if (tour.getItinerary() != null && !tour.getItinerary().isEmpty()) {
             StringBuilder itineraryBuilder = new StringBuilder();
             for (ItineraryItem item : tour.getItinerary()) {
-                if (item.getLocation() != null && !item.getLocation().isEmpty()) {
-                    itineraryBuilder.append("• ").append(item.getLocation()).append("\n");
-                }
+                itineraryBuilder.append("• ").append(item.getName()).append("\n");
             }
             tvItinerary.setText(itineraryBuilder.toString().trim());
         } else {
             tvItinerary.setText("No itinerary available.");
         }
 
-        String priceText = "• Base Price: $ " + (tour.getBasePrice() != null ? formatNumber(tour.getBasePrice()) : "N/A") + "\n"
-                + "• Taxes: $ " + (tour.getTaxes() != null ? formatNumber(tour.getTaxes()) : "N/A") + "\n"
-                + "• Fees: $ " + (tour.getFees() != null ? formatNumber(tour.getFees()) : "N/A");
+        String priceText = "Base Price: $" + (tour.getBasePrice() != null ? tour.getBasePrice() : "")
+                + "   Taxes: $" + (tour.getTaxes() != null ? tour.getTaxes() : "")
+                + "   Fees: $" + (tour.getFees() != null ? tour.getFees() : "");
         tvPrices.setText(priceText);
 
         if (tour.getIncludedServices() != null && !tour.getIncludedServices().isEmpty()) {
@@ -134,9 +141,7 @@ public class TourDetailsActivity extends AppCompatActivity {
     }
 
     private void fetchAndDisplayReviewsSummary(String tourId) {
-        db.collection("reviews")
-                .whereEqualTo("tourId", tourId)
-                .get()
+        db.collection("reviews").whereEqualTo("tourId", tourId).get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful() && task.getResult() != null) {
                         if (task.getResult().isEmpty()) {
@@ -148,18 +153,13 @@ public class TourDetailsActivity extends AppCompatActivity {
                             int reviewCount = task.getResult().size();
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 Review review = document.toObject(Review.class);
-                                if (review != null) {
-                                    totalRating += review.rating;
-                                }
+                                totalRating += review.getRating();
                             }
                             float averageRating = totalRating / reviewCount;
                             ratingNumber.setText(String.format(Locale.US, "%.1f", averageRating));
                             ratingBar.setRating(averageRating);
                             tvTotalReviewsClickable.setText("(" + reviewCount + " đánh giá)");
                         }
-                    } else {
-                        ratingNumber.setText("N/A");
-                        tvTotalReviewsClickable.setText("(Lỗi tải)");
                     }
                 });
     }
@@ -183,11 +183,72 @@ public class TourDetailsActivity extends AppCompatActivity {
             intent.putExtra("itinerary", new Gson().toJson(tour.getItinerary()));
             startActivity(intent);
         });
+
+        btnFavorite.setOnClickListener(v -> toggleFavorite(tour.getId()));
+    }
+
+    private void checkIfFavorite(String tourId) {
+        String userId = sessionManager.getUserId();
+        if (userId == null) return;
+        db.collection("favorites").whereEqualTo("userId", userId).whereEqualTo("tourId", tourId).limit(1).get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && !task.getResult().isEmpty()) {
+                        isFavorited = true;
+                        favoriteDocumentId = task.getResult().getDocuments().get(0).getId();
+                    } else {
+                        isFavorited = false;
+                        favoriteDocumentId = null;
+                    }
+                    updateFavoriteButtonUI();
+                });
+    }
+
+    private void toggleFavorite(String tourId) {
+        if (isFavorited) {
+            removeFromFavorites();
+        } else {
+            addToFavorites(tourId);
+        }
+    }
+
+    private void addToFavorites(String tourId) {
+        String userId = sessionManager.getUserId();
+        if (userId == null) {
+            Toast.makeText(this, "Vui lòng đăng nhập để yêu thích.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        Map<String, Object> favoriteData = new HashMap<>();
+        favoriteData.put("userId", userId);
+        favoriteData.put("tourId", tourId);
+        favoriteData.put("timestamp", FieldValue.serverTimestamp());
+        db.collection("favorites").add(favoriteData).addOnSuccessListener(docRef -> {
+            Toast.makeText(this, "Đã thêm vào Yêu thích", Toast.LENGTH_SHORT).show();
+            isFavorited = true;
+            favoriteDocumentId = docRef.getId();
+            updateFavoriteButtonUI();
+        });
+    }
+
+    private void removeFromFavorites() {
+        if (favoriteDocumentId == null) return;
+        db.collection("favorites").document(favoriteDocumentId).delete().addOnSuccessListener(aVoid -> {
+            Toast.makeText(this, "Đã xóa khỏi Yêu thích", Toast.LENGTH_SHORT).show();
+            isFavorited = false;
+            favoriteDocumentId = null;
+            updateFavoriteButtonUI();
+        });
+    }
+
+    private void updateFavoriteButtonUI() {
+        if (isFavorited) {
+            btnFavorite.setImageResource(R.drawable.ic_favorite_filled);
+        } else {
+            btnFavorite.setImageResource(R.drawable.ic_favorite_border);
+        }
     }
 
     private int dpToPx(int dp) {
-        float density = getResources().getDisplayMetrics().density;
-        return Math.round(dp * density);
+        return Math.round(dp * getResources().getDisplayMetrics().density);
     }
 
     private void showImageZoom(String imageUrl) {
