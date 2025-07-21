@@ -1,5 +1,6 @@
 package com.example.tourbooking.view.profile;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -9,18 +10,16 @@ import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-
 import com.bumptech.glide.Glide;
 import com.example.tourbooking.R;
 import com.example.tourbooking.model.User;
+import com.example.tourbooking.utils.SessionManager; // Import mới
 import com.example.tourbooking.view.info.LogoutConfirmationActivity;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public class ProfileActivity extends AppCompatActivity {
@@ -30,9 +29,10 @@ public class ProfileActivity extends AppCompatActivity {
     private Button btnEditProfile, btnLogout;
     private ProgressBar progressBar;
     private ScrollView profileContent;
-
     private FirebaseFirestore db;
-    private FirebaseAuth mAuth;
+    private User currentUserProfile;
+    private ActivityResultLauncher<Intent> editProfileLauncher;
+    private SessionManager sessionManager; // Import mới
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -47,13 +47,13 @@ public class ProfileActivity extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(v -> onBackPressed());
 
         db = FirebaseFirestore.getInstance();
-        mAuth = FirebaseAuth.getInstance();
+        sessionManager = new SessionManager(this); // Khởi tạo SessionManager
 
         initializeViews();
+        registerEditProfileLauncher();
         setupClickListeners();
         loadUserProfile();
     }
-
     private void initializeViews() {
         ivAvatar = findViewById(R.id.ivAvatar);
         tvFullName = findViewById(R.id.tvFullName);
@@ -67,28 +67,48 @@ public class ProfileActivity extends AppCompatActivity {
         profileContent = findViewById(R.id.profileContent);
     }
 
+    private void registerEditProfileLauncher() {
+        editProfileLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    // Kiểm tra xem EditProfileActivity có trả về kết quả RESULT_OK không
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        // Nếu có, nghĩa là người dùng đã lưu thay đổi -> tải lại hồ sơ
+                        Toast.makeText(this, "Đang cập nhật hồ sơ...", Toast.LENGTH_SHORT).show();
+                        loadUserProfile();
+                    }
+                }
+        );
+    }
+
     private void setupClickListeners() {
         btnEditProfile.setOnClickListener(v -> {
-            // startActivity(new Intent(this, EditProfileActivity.class));
-            Toast.makeText(this, "Mở màn hình Chỉnh sửa hồ sơ (M23)", Toast.LENGTH_SHORT).show();
+            if (currentUserProfile != null) {
+                Intent intent = new Intent(this, EditProfileActivity.class);
+                // Gửi toàn bộ đối tượng User sang màn hình chỉnh sửa
+                intent.putExtra("USER_PROFILE", currentUserProfile);
+                editProfileLauncher.launch(intent);
+            } else {
+                Toast.makeText(this, "Không thể tải dữ liệu để chỉnh sửa.", Toast.LENGTH_SHORT).show();
+            }
         });
 
         btnLogout.setOnClickListener(v -> {
-             startActivity(new Intent(this, LogoutConfirmationActivity.class));
-//            Toast.makeText(this, "Mở màn hình Xác nhận Đăng xuất (M34)", Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(this, LogoutConfirmationActivity.class));
         });
     }
 
+
     private void loadUserProfile() {
         setLoadingState(true);
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        String userIdToQuery;
+        // SỬA LẠI LOGIC LẤY USER ID
+        String userIdToQuery = sessionManager.getUserId();
 
-        if (currentUser != null) {
-            userIdToQuery = currentUser.getUid();
-        } else {
-            // Dùng User ID của document "users" mà bạn đã tạo để test
-            userIdToQuery = "hehe";
+        if (userIdToQuery == null) {
+            Toast.makeText(this, "Vui lòng đăng nhập để xem hồ sơ.", Toast.LENGTH_SHORT).show();
+            // Có thể chuyển về màn hình Login ở đây
+            finish();
+            return;
         }
 
         db.collection("users").document(userIdToQuery)
@@ -96,9 +116,9 @@ public class ProfileActivity extends AppCompatActivity {
                 .addOnSuccessListener(documentSnapshot -> {
                     setLoadingState(false);
                     if (documentSnapshot.exists()) {
-                        User user = documentSnapshot.toObject(User.class);
-                        if (user != null) {
-                            populateUi(user);
+                        currentUserProfile = documentSnapshot.toObject(User.class);
+                        if (currentUserProfile != null) {
+                            populateUi(currentUserProfile);
                         }
                     } else {
                         Toast.makeText(this, "Không tìm thấy hồ sơ người dùng.", Toast.LENGTH_SHORT).show();
@@ -119,8 +139,8 @@ public class ProfileActivity extends AppCompatActivity {
 
         Glide.with(this)
                 .load(user.getAvatarUrl())
-                .placeholder(R.drawable.ic_profile) // Ảnh mặc định
-                .circleCrop() // Bo tròn ảnh
+                .placeholder(R.drawable.ic_profile)
+                .circleCrop()
                 .into(ivAvatar);
     }
 
@@ -133,4 +153,5 @@ public class ProfileActivity extends AppCompatActivity {
             profileContent.setVisibility(View.VISIBLE);
         }
     }
+
 }
