@@ -1,7 +1,6 @@
 package com.example.tourbooking.view.auth;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -11,8 +10,10 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.tourbooking.R;
+import com.example.tourbooking.utils.SessionManager; // Import mới
 import com.example.tourbooking.view.home.HomeActivity;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.DocumentSnapshot;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -46,7 +47,7 @@ public class LoginActivity extends AppCompatActivity {
                     .get()
                     .addOnSuccessListener(querySnapshot -> {
                         if (!querySnapshot.isEmpty()) {
-                            com.google.firebase.firestore.DocumentSnapshot document = querySnapshot.getDocuments().get(0);
+                            DocumentSnapshot document = querySnapshot.getDocuments().get(0);
                             String storedPassword = document.getString("password");
 
                             if (storedPassword != null && storedPassword.equals(password)) {
@@ -56,13 +57,12 @@ public class LoginActivity extends AppCompatActivity {
                                 String user = document.getString("userName");
                                 String fullName = document.getString("fullName");
 
-                                SharedPreferences prefs = getSharedPreferences("UserPrefs", MODE_PRIVATE);
-                                SharedPreferences.Editor editor = prefs.edit();
-                                editor.putString("userId", userId);
-                                editor.putString("username", user);
-                                editor.putString("fullName", fullName);
-                                editor.apply();
+                                // SỬ DỤNG SESSION MANAGER ĐỂ LƯU THÔNG TIN
+                                SessionManager sessionManager = new SessionManager(getApplicationContext());
+                                sessionManager.saveLoginSession(userId, user, fullName);
+
                                 Intent intent = new Intent(this, HomeActivity.class);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                 startActivity(intent);
                                 finish();
                             } else {

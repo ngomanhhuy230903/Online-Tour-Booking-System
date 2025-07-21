@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -23,9 +24,18 @@ import com.bumptech.glide.Glide;
 import com.example.tourbooking.R;
 import com.example.tourbooking.adapter.BannerSliderAdapter;
 import com.example.tourbooking.model.Tour;
+import com.example.tourbooking.view.profile.ProfileActivity;
+import com.example.tourbooking.view.profile.SettingsActivity;
+import com.example.tourbooking.view.support.ChatSupportActivity;
+import com.example.tourbooking.view.support.FeedbackActivity;
+import com.example.tourbooking.view.support.NotificationsActivity;
+import com.example.tourbooking.view.tour.CompareTourActivity;
+import com.example.tourbooking.view.tour.DashBoardActivity;
+import com.example.tourbooking.view.tour.ItineraryBuilderActivity;
 import com.example.tourbooking.view.tour.SearchActivity;
 import com.example.tourbooking.view.tour.SearchResultsActivity;
 import com.example.tourbooking.view.tour.TourDetailsActivity;
+import com.example.tourbooking.view.tour.TravelInsuranceActivity;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -59,6 +69,7 @@ public class HomeActivity extends AppCompatActivity {
         loadFeaturedTours();
         loadRecommendedTours();
         setupCategoryListeners();
+        setupActionButtons();
     }
 
     private void initializeViews() {
@@ -72,6 +83,51 @@ public class HomeActivity extends AppCompatActivity {
         etSearch.setOnClickListener(v -> {
             Intent intent = new Intent(HomeActivity.this, SearchActivity.class);
             startActivity(intent);
+        });
+    }
+
+    private void setupActionButtons() {
+        ImageButton btnProfile = findViewById(R.id.btnProfile);
+        ImageButton btnSettings = findViewById(R.id.btnSettings);
+        ImageButton btnNotifications = findViewById(R.id.btnNotifications);
+        ImageButton btnChatSupport = findViewById(R.id.btnChatSupport);
+        ImageButton btnFeedback = findViewById(R.id.btnFeedback);
+        ImageButton btnDasboard = findViewById(R.id.btnDashboard);
+        ImageButton btnCompareTour = findViewById(R.id.btnCompareTour);
+        ImageButton btnInsurance = findViewById(R.id.btnInsurance);
+
+        ImageButton btnBuilder = findViewById(R.id.btnBuilder);
+
+        btnProfile.setOnClickListener(v -> {
+            startActivity(new Intent(this, ProfileActivity.class));
+        });
+
+        btnSettings.setOnClickListener(v -> {
+            startActivity(new Intent(this, SettingsActivity.class));
+        });
+
+        btnNotifications.setOnClickListener(v -> {
+            startActivity(new Intent(this, NotificationsActivity.class));
+        });
+
+        btnChatSupport.setOnClickListener(v -> {
+            startActivity(new Intent(this, ChatSupportActivity.class));
+        });
+
+        btnFeedback.setOnClickListener(v -> {
+            startActivity(new Intent(this, FeedbackActivity.class));
+        });
+        btnDasboard.setOnClickListener(v -> {
+            startActivity(new Intent(this, DashBoardActivity.class));
+        });
+        btnCompareTour.setOnClickListener(v -> {
+            startActivity(new Intent(this, CompareTourActivity.class));
+        });
+        btnInsurance.setOnClickListener(v -> {
+            startActivity(new Intent(this, TravelInsuranceActivity.class));
+        });
+        btnBuilder.setOnClickListener(v -> {
+            startActivity(new Intent(this, ItineraryBuilderActivity.class));
         });
     }
 
@@ -115,7 +171,7 @@ public class HomeActivity extends AppCompatActivity {
 
     private void loadFeaturedTours() {
         db.collection("tours")
-                .orderBy("viewCount", Query.Direction.DESCENDING)
+                .orderBy("rating", Query.Direction.DESCENDING) // Sửa lại, có thể bạn muốn orderBy rating
                 .limit(10)
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
@@ -124,8 +180,6 @@ public class HomeActivity extends AppCompatActivity {
 
                     for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
                         Tour tour = doc.toObject(Tour.class);
-
-                        // === DÒNG 1: GÁN ID TỪ FIRESTORE VÀO ĐỐI TƯỢNG TOUR ===
                         tour.setId(doc.getId());
 
                         View tourView = inflater.inflate(R.layout.item_tour, tourContainer, false);
@@ -134,14 +188,13 @@ public class HomeActivity extends AppCompatActivity {
                         TextView txtTourPrice = tourView.findViewById(R.id.txtTourPrice);
 
                         txtTourName.setText(tour.getTourName());
-                        txtTourPrice.setText("$ " + formatNumber(tour.getPrice()));
+                        txtTourPrice.setText(formatNumber(tour.getPrice()));
 
                         Glide.with(this).load(tour.getThumbnailUrl()).into(imgTour);
 
                         tourView.setOnClickListener(v -> {
                             Intent intent = new Intent(this, TourDetailsActivity.class);
                             intent.putExtra("tour", tour);
-                            // === DÒNG 2: GỬI KÈM ID TRONG INTENT ===
                             intent.putExtra("tour_id", tour.getId());
                             startActivity(intent);
                         });
@@ -156,7 +209,7 @@ public class HomeActivity extends AppCompatActivity {
 
     private void loadRecommendedTours() {
         db.collection("tours")
-                .orderBy("rating", Query.Direction.DESCENDING)
+                .orderBy("price", Query.Direction.ASCENDING) // Ví dụ: tour giá rẻ
                 .limit(10)
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
@@ -173,7 +226,7 @@ public class HomeActivity extends AppCompatActivity {
                         TextView txtTourPrice = tourView.findViewById(R.id.txtTourPrice);
 
                         txtTourName.setText(tour.getTourName());
-                        txtTourPrice.setText("$ " + formatNumber(tour.getPrice()));
+                        txtTourPrice.setText(formatNumber(tour.getPrice()));
 
                         Glide.with(this).load(tour.getThumbnailUrl()).into(imgTour);
 
@@ -188,7 +241,7 @@ public class HomeActivity extends AppCompatActivity {
                     }
                 })
                 .addOnFailureListener(e -> {
-                    Toast.makeText(this, "Failed to load tours", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Failed to load recommended tours", Toast.LENGTH_SHORT).show();
                 });
     }
 
@@ -209,7 +262,9 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        sliderHandler.removeCallbacks(sliderRunnable);
+        if (sliderRunnable != null) {
+            sliderHandler.removeCallbacks(sliderRunnable);
+        }
     }
 
     @Override

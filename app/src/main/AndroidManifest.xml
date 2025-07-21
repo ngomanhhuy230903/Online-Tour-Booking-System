@@ -18,6 +18,27 @@
         android:theme="@style/Theme.TourBooking"
         tools:targetApi="31">
         <activity
+            android:name=".view.support.FeedbackActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.support.ChatSupportActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.support.NotificationsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.profile.SettingsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.profile.ChangePasswordActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.profile.EditProfileActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.profile.ProfileActivity"
+            android:exported="false" />
+        <activity
             android:name=".view.tour.CompareInsuranceActivity"
             android:exported="false" />
         <activity
@@ -70,8 +91,7 @@
             android:exported="false" />
         <activity
             android:name=".MainActivity"
-            android:exported="false"/>
- <!-- <activity -->
+            android:exported="false" /> <!-- <activity -->
         <!-- android:name=".view.auth.LoginActivity" -->
         <!-- android:exported="true"> -->
         <!-- <intent-filter> -->
@@ -99,13 +119,13 @@
             android:exported="false" />
         <activity
             android:name=".view.auth.LoginActivity"
-            android:exported="true" >
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
-    </activity>
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".view.info.TermsActivity"
             android:exported="false" /> <!-- Google Maps API Key -->
