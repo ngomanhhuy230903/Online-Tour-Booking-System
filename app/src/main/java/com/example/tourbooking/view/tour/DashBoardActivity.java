@@ -88,6 +88,7 @@ public class DashBoardActivity extends AppCompatActivity {
                     recommendedTours.clear();
                     for (QueryDocumentSnapshot doc : snapshot) {
                         Tour tour = doc.toObject(Tour.class);
+                        tour.setId(doc.getId());
                         upcomingTours.add(tour);
                         if (tour.getRating() != null && tour.getRating() >= 4.0) {
                             recommendedTours.add(tour);
