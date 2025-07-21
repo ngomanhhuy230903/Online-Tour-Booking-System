@@ -10,17 +10,16 @@ import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-
 import com.bumptech.glide.Glide;
 import com.example.tourbooking.R;
 import com.example.tourbooking.model.User;
 import com.example.tourbooking.utils.SessionManager;
+import com.example.tourbooking.view.booking.FavoritesActivity;
 import com.example.tourbooking.view.info.LogoutConfirmationActivity;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -28,10 +27,9 @@ public class ProfileActivity extends AppCompatActivity {
 
     private ImageView ivAvatar;
     private TextView tvFullName, tvUserName, tvPhoneNumber, tvDateOfBirth, tvGender;
-    private Button btnEditProfile, btnLogout, btnChangePassword; // Thêm biến mới
+    private Button btnEditProfile, btnLogout, btnChangePassword, btnViewFavorites;
     private ProgressBar progressBar;
     private ScrollView profileContent;
-
     private FirebaseFirestore db;
     private User currentUserProfile;
     private ActivityResultLauncher<Intent> editProfileLauncher;
@@ -67,7 +65,8 @@ public class ProfileActivity extends AppCompatActivity {
         tvGender = findViewById(R.id.tvGender);
         btnEditProfile = findViewById(R.id.btnEditProfile);
         btnLogout = findViewById(R.id.btnLogout);
-        btnChangePassword = findViewById(R.id.btnChangePassword); // Ánh xạ nút mới
+        btnChangePassword = findViewById(R.id.btnChangePassword);
+        btnViewFavorites = findViewById(R.id.btnViewFavorites);
         progressBar = findViewById(R.id.progressBarProfile);
         profileContent = findViewById(R.id.profileContent);
     }
@@ -90,12 +89,9 @@ public class ProfileActivity extends AppCompatActivity {
                 Intent intent = new Intent(this, EditProfileActivity.class);
                 intent.putExtra("USER_PROFILE", currentUserProfile);
                 editProfileLauncher.launch(intent);
-            } else {
-                Toast.makeText(this, "Không thể tải dữ liệu để chỉnh sửa.", Toast.LENGTH_SHORT).show();
             }
         });
 
-        // Gán sự kiện cho nút Đổi mật khẩu
         btnChangePassword.setOnClickListener(v -> {
             startActivity(new Intent(this, ChangePasswordActivity.class));
         });
@@ -103,16 +99,17 @@ public class ProfileActivity extends AppCompatActivity {
         btnLogout.setOnClickListener(v -> {
             startActivity(new Intent(this, LogoutConfirmationActivity.class));
         });
+
+        btnViewFavorites.setOnClickListener(v -> {
+            startActivity(new Intent(this, FavoritesActivity.class));
+        });
     }
 
     private void loadUserProfile() {
         setLoadingState(true);
-        // SỬA LẠI LOGIC LẤY USER ID
         String userIdToQuery = sessionManager.getUserId();
-
         if (userIdToQuery == null) {
             Toast.makeText(this, "Vui lòng đăng nhập để xem hồ sơ.", Toast.LENGTH_SHORT).show();
-            // Có thể chuyển về màn hình Login ở đây
             finish();
             return;
         }
@@ -135,28 +132,18 @@ public class ProfileActivity extends AppCompatActivity {
                     Toast.makeText(this, "Lỗi khi tải hồ sơ.", Toast.LENGTH_SHORT).show();
                 });
     }
+
     private void populateUi(User user) {
         tvFullName.setText(user.getFullName());
         tvUserName.setText("@" + user.getUserName());
         tvPhoneNumber.setText(user.getPhoneNumber());
         tvDateOfBirth.setText(user.getDob());
         tvGender.setText(user.getGender());
-
-        Glide.with(this)
-                .load(user.getAvatarUrl())
-                .placeholder(R.drawable.ic_profile)
-                .circleCrop()
-                .into(ivAvatar);
+        Glide.with(this).load(user.getAvatarUrl()).placeholder(R.drawable.ic_profile).circleCrop().into(ivAvatar);
     }
 
     private void setLoadingState(boolean isLoading) {
-        if (isLoading) {
-            progressBar.setVisibility(View.VISIBLE);
-            profileContent.setVisibility(View.INVISIBLE);
-        } else {
-            progressBar.setVisibility(View.GONE);
-            profileContent.setVisibility(View.VISIBLE);
-        }
+        progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+        profileContent.setVisibility(isLoading ? View.INVISIBLE : View.VISIBLE);
     }
-
 }

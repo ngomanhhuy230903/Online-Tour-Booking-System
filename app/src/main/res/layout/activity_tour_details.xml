@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -12,17 +13,31 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- Title -->
-        <TextView
-            android:id="@+id/tvTitle"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Tour Details"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="12dp" />
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:layout_marginBottom="12dp">
 
-        <!-- Main Image + Gallery -->
+            <TextView
+                android:id="@+id/tvTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Tour Details"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <ImageButton
+                android:id="@+id/btnFavorite"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Yêu thích"
+                android:src="@drawable/ic_favorite_border" />
+        </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -43,8 +58,6 @@
                 android:layout_marginStart="8dp"
                 android:gravity="center_vertical" />
         </LinearLayout>
-
-        <!-- Tour Name -->
         <TextView
             android:id="@+id/tvTourName"
             android:layout_width="match_parent"
@@ -53,57 +66,45 @@
             android:textSize="20sp"
             android:textStyle="bold"
             android:layout_marginTop="16dp" />
-
-        <!-- Description -->
         <TextView
             android:id="@+id/tvDescription"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Enjoy a relaxing beach day with all essentials provided. Detailed info about the tour, including amenities, activities, and local culture."
             android:layout_marginTop="8dp" />
-
-        <!-- Itinerary -->
         <TextView
             android:text="Itinerary:"
             android:textStyle="bold"
             android:layout_marginTop="16dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
-
         <TextView
             android:id="@+id/tvItinerary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="• Day 1: Arrival, Beach Time\n• Day 2: Local Tour, Water Sports\n• Day 3: Departure" />
-
-        <!-- Price Breakdown -->
         <TextView
             android:text="Price Breakdown:"
             android:textStyle="bold"
             android:layout_marginTop="16dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
-
         <TextView
             android:id="@+id/tvPrices"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Base Price: $200   Taxes: $20   Fees: $10" />
-
-        <!-- Included/Excluded -->
         <TextView
             android:text="Included"
             android:textStyle="bold"
             android:layout_marginTop="16dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_marginTop="4dp">
-
             <TextView
                 android:id="@+id/tvIncluded"
                 android:layout_width="0dp"
@@ -116,21 +117,17 @@
             android:layout_marginTop="16dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_marginTop="4dp">
-
             <TextView
                 android:id="@+id/tvExcluded"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content" />
         </LinearLayout>
-
-        <!-- Rating -->
         <LinearLayout
             android:id="@+id/layoutReviews"
             android:layout_width="match_parent"
@@ -142,12 +139,10 @@
             android:clickable="true"
             android:focusable="true"
             android:padding="8dp">
-
             <TextView
                 android:text="Reviews:"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
-
             <TextView
                 android:id="@+id/ratingNumber"
                 android:text="0.0"
@@ -155,7 +150,6 @@
                 android:layout_marginStart="8dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
-
             <RatingBar
                 android:id="@+id/ratingBar"
                 android:layout_width="wrap_content"
@@ -167,16 +161,13 @@
                 android:scaleY="0.7"
                 android:layout_marginStart="6dp"
                 style="?android:attr/ratingBarStyleSmall" />
-
             <TextView
                 android:id="@+id/tvTotalReviewsClickable"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 tools:text="(125 reviews)" />
-
         </LinearLayout>
-
         <Button
             android:id="@+id/btnViewMap"
             android:layout_width="match_parent"
@@ -188,8 +179,6 @@
             android:textColor="@android:color/white"
             android:drawableStart="@drawable/ic_location"
             android:drawablePadding="8dp" />
-
-        <!-- Book Now -->
         <Button
             android:id="@+id/btnBookNow"
             android:layout_width="match_parent"
