@@ -79,6 +79,41 @@
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="Gửi phản hồi"
                 android:src="@drawable/ic_feedback" />
+
+            <ImageButton
+                android:id="@+id/btnDashboard"
+                android:layout_width="49dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Dashboard"
+                android:src="@drawable/ic_tour" />
+
+            <ImageButton
+                android:id="@+id/btnCompareTour"
+                android:layout_width="44dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Compare Tours"
+                android:src="@drawable/ic_promotion" />
+
+            <ImageButton
+                android:id="@+id/btnInsurance"
+                android:layout_width="47dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Insurance"
+                android:src="@drawable/ic_feedback" />
+            <ImageButton
+                android:id="@+id/btnBuilder"
+                android:layout_width="47dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Builder"
+                android:src="@drawable/ic_add_photo" />
         </LinearLayout>
 
         <EditText
